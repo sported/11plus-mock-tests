@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mock Test Admin</title>
+<style>
+  :root{
+    --bg:#ffffff; --panel:#ffffff; --panel-2:#f7f8fb; --ink:#2b2250;
+    --amber:#ffb020; --amber-bg:#fff3d9; --teal:#17b199; --coral:#ff5a6a;
+    --line: rgba(43,34,80,0.10); --text:#2b2250; --text-dim:#6b6693; --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; min-height:100vh; padding:28px 16px 60px;}
+  .wrap{ max-width: 820px; margin:0 auto; }
+  h1{ font-family: Georgia, serif; font-size:26px; margin:0 0 4px; color:var(--ink);}
+  .eyebrow{ font-family: Georgia, serif; letter-spacing:0.14em; text-transform:uppercase; font-size:11px; color:var(--teal); margin:0 0 6px;}
+  .sub{ color:var(--text-dim); font-size:13.5px; margin:0 0 20px; }
+  .panel{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:22px 24px; margin-bottom:18px; box-shadow:0 1px 3px rgba(29,42,48,0.05); }
+  .tabs{ display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap; }
+  .tab{ background:var(--panel); border:1px solid var(--line); color:var(--text-dim); padding:9px 16px; border-radius:20px; font-size:13.5px; cursor:pointer; }
+  .tab.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  label{ display:block; font-size:12px; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-dim); margin-bottom:6px; }
+  input, select, textarea{ width:100%; background:var(--panel-2); border:1px solid var(--line); color:var(--text); font-size:15px; padding:11px 13px; border-radius:8px; font-family:inherit; }
+  textarea{ min-height:90px; resize:vertical; }
+  .field{ margin-bottom:14px; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  button.primary{ background:var(--amber); color:#fff; border:none; font-weight:700; padding:12px 22px; border-radius:8px; font-size:14.5px; cursor:pointer; }
+  button.primary:disabled{ background:var(--line); color:var(--text-dim); cursor:not-allowed; }
+  button.ghost{ background:transparent; color:var(--text-dim); border:1px solid var(--line); padding:10px 16px; border-radius:8px; font-size:13.5px; cursor:pointer; }
+  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  th{ text-align:left; color:var(--text-dim); font-size:11px; text-transform:uppercase; letter-spacing:0.05em; padding:8px 10px; border-bottom:1px solid var(--line); }
+  td{ padding:9px 10px; border-bottom:1px solid var(--line); }
+  .status-chip{ font-size:11px; padding:3px 9px; border-radius:20px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; }
+  .status-pending{ background:var(--amber-bg); color:#7a5314; }
+  .status-completed{ background:rgba(47,143,130,0.15); color:var(--teal); }
+  .status-failed{ background:rgba(193,72,61,0.15); color:var(--coral); }
+  .msg{ font-size:13px; margin-top:10px; }
+  .msg.error{ color:var(--coral); }
+  .msg.success{ color:var(--teal); }
+  .empty{ color:var(--text-dim); font-size:13.5px; padding:14px 0; }
+  .center-msg{ text-align:center; color:var(--text-dim); font-size:14px; padding:60px 10px; }
+  .subject-tag{ font-size:10.5px; text-transform:uppercase; letter-spacing:0.06em; color:var(--teal); border:1px solid rgba(47,143,130,0.35); padding:2px 8px; border-radius:20px; white-space:nowrap;}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <p class="eyebrow">Mock Test &middot; Admin</p>
+  <h1>Class Admin</h1>
+  <p class="sub">Manage students and request new mock tests.</p>
+  <div id="content"><div class="center-msg">Loading…</div></div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://lytwxeietqrtfrszzbcd.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5dHd4ZWlldHFydGZyc3p6YmNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MzU3MDEsImV4cCI6MjA5OTAxMTcwMX0.r8Mz8IKeeRRVDjNLlD-HmMeEpbsnzfKkiPzltHRaKyQ";
+
+function sbHeaders(extra){
+  return Object.assign({ 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type':'application/json' }, extra||{});
+}
+async function sbGet(path){
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, { headers: sbHeaders() });
+  if(!res.ok) throw new Error('GET failed: ' + path);
+  return res.json();
+}
+async function sbPost(path, body, prefer){
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, { method:'POST', headers: sbHeaders({'Prefer': prefer || 'return=representation'}), body: JSON.stringify(body) });
+  if(!res.ok) throw new Error('POST failed: ' + path + ' ' + (await res.text()));
+  const t = await res.text();
+  return t ? JSON.parse(t) : [];
+}
+async function sbPatch(path, body){
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, { method:'PATCH', headers: sbHeaders({'Prefer':'return=representation'}), body: JSON.stringify(body) });
+  if(!res.ok) throw new Error('PATCH failed: ' + path);
+  return res.json();
+}
+async function sha256(text){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+const SUBJECTS = [
+  {value:'maths', label:'Maths'},
+  {value:'english', label:'English'},
+  {value:'verbal_reasoning', label:'Verbal Reasoning'},
+  {value:'non_verbal_reasoning', label:'Non-Verbal Reasoning'},
+  {value:'spellings', label:'Spellings'}
+];
+function subjectLabel(v){ const s = SUBJECTS.find(x=>x.value===v); return s ? s.label : v; }
+
+let adminUser = null;
+let activeTab = 'students';
+const content = document.getElementById('content');
+
+async function init(){
+  content.innerHTML = renderLoginForm();
+  wireLogin();
+}
+
+function renderLoginForm(msg){
+  return `
+    <div class="panel" style="max-width:380px;">
+      <input type="text" style="position:absolute; left:-9999px;" tabindex="-1" autocomplete="username" />
+      <input type="password" style="position:absolute; left:-9999px;" tabindex="-1" autocomplete="new-password" />
+      <div class="field"><label>Username</label><input id="loginUser" name="admin_login_user" autocomplete="off" data-lpignore="true" /></div>
+      <div class="field"><label>Password</label><input id="loginPass" name="admin_login_pass" type="password" autocomplete="new-password" data-lpignore="true" /></div>
+      <button class="primary" id="loginBtn">Log in</button>
+      ${msg ? `<p class="msg error">${msg}</p>` : ''}
+    </div>
+  `;
+}
+function wireLogin(){
+  document.getElementById('loginBtn').addEventListener('click', async () => {
+    const u = document.getElementById('loginUser').value.trim();
+    const p = document.getElementById('loginPass').value;
+    if(!u || !p) return;
+    try{
+      const hash = await sha256(p);
+      const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/verify_admin_login', {
+        method: 'POST',
+        headers: sbHeaders(),
+        body: JSON.stringify({ p_username: u, p_password_hash: hash })
+      });
+      const rows = res.ok ? await res.json() : [];
+      if(rows.length){
+        adminUser = rows[0];
+        renderApp();
+      } else {
+        content.innerHTML = renderLoginForm('Incorrect username or password.');
+        wireLogin();
+      }
+    } catch(err){
+      console.error(err);
+      content.innerHTML = renderLoginForm('Could not reach the database. Check your connection.');
+      wireLogin();
+    }
+  });
+}
+
+function renderTabs(){
+  return `
+    <div class="tabs">
+      <button class="tab ${activeTab==='students'?'active':''}" data-tab="students">Students</button>
+      <button class="tab ${activeTab==='tests'?'active':''}" data-tab="tests">Mock tests</button>
+      <button class="tab ${activeTab==='requests'?'active':''}" data-tab="requests">New test request</button>
+    </div>
+  `;
+}
+function wireTabs(){
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => { activeTab = t.dataset.tab; renderApp(); });
+  });
+}
+
+async function renderApp(){
+  content.innerHTML = renderTabs() + '<div id="tabBody" class="center-msg">Loading…</div>';
+  wireTabs();
+  const body = document.getElementById('tabBody');
+  try{
+    if(activeTab === 'students') await renderStudents(body);
+    else if(activeTab === 'tests') await renderTests(body);
+    else await renderRequests(body);
+  } catch(err){
+    console.error(err);
+    body.innerHTML = '<div class="center-msg">Something went wrong loading this tab.</div>';
+  }
+}
+
+async function renderStudents(body){
+  const students = await sbGet('students?select=id,name,class_group,total_xp,level,created_at&order=name.asc');
+  let rows = students.map(s => `
+    <tr>
+      <td>${s.name}</td>
+      <td>${s.class_group || '—'}</td>
+      <td>${s.total_xp}</td>
+      <td>${s.level}</td>
+      <td>Set</td>
+    </tr>
+  `).join('');
+
+  body.innerHTML = `
+    <div class="panel">
+      <h3 style="margin-top:0;">Add a student</h3>
+      <div class="row2">
+        <div class="field"><label>Name</label><input id="newStudentName" autocomplete="off" /></div>
+        <div class="field"><label>Class / group (optional)</label><input id="newStudentClass" autocomplete="off" /></div>
+      </div>
+      <div class="field"><label>Password</label><input id="newStudentPass" name="new_student_access_code" type="text" placeholder="e.g. a simple word or PIN" autocomplete="off" data-lpignore="true" /></div>
+      <button class="primary" id="addStudentBtn">Add student</button>
+      <div id="studentMsg"></div>
+    </div>
+    <div class="panel">
+      <h3 style="margin-top:0;">All students (${students.length})</h3>
+      ${students.length ? `<table><thead><tr><th>Name</th><th>Class</th><th>XP</th><th>Level</th><th>Password</th></tr></thead><tbody>${rows}</tbody></table>` : '<div class="empty">No students yet — add one above.</div>'}
+    </div>
+  `;
+
+  document.getElementById('addStudentBtn').addEventListener('click', async () => {
+    const name = document.getElementById('newStudentName').value.trim();
+    const cls = document.getElementById('newStudentClass').value.trim();
+    const pass = document.getElementById('newStudentPass').value;
+    const msg = document.getElementById('studentMsg');
+    if(!name || !pass){ msg.innerHTML = '<p class="msg error">Name and password are required.</p>'; return; }
+    try{
+      const existing = await sbGet('students?name=eq.' + encodeURIComponent(name) + '&select=id');
+      if(existing.length){ msg.innerHTML = '<p class="msg error">A student with that name already exists.</p>'; return; }
+      const hash = await sha256(pass);
+      await sbPost('students', { name, class_group: cls || null, password_hash: hash, total_xp: 0, level: 1 }, 'return=minimal');
+      msg.innerHTML = '<p class="msg success">Student added.</p>';
+      renderApp();
+    } catch(err){
+      console.error(err);
+      msg.innerHTML = '<p class="msg error">Could not add student.</p>';
+    }
+  });
+}
+
+async function renderTests(body){
+  const tests = await sbGet('mock_tests?select=*,questions(count)&order=created_at.desc');
+  let rows = tests.map(t => `
+    <tr>
+      <td>${t.title}</td>
+      <td><span class="subject-tag">${subjectLabel(t.subject)}</span></td>
+      <td>${t.questions && t.questions[0] ? t.questions[0].count : 0}</td>
+      <td>${Math.round((t.time_limit_seconds||0)/60)} min</td>
+      <td>${new Date(t.created_at).toLocaleDateString()}</td>
+    </tr>
+  `).join('');
+  body.innerHTML = `
+    <div class="panel">
+      <h3 style="margin-top:0;">All mock tests (${tests.length})</h3>
+      ${tests.length ? `<table><thead><tr><th>Title</th><th>Subject</th><th>Questions</th><th>Time limit</th><th>Created</th></tr></thead><tbody>${rows}</tbody></table>` : '<div class="empty">No tests yet.</div>'}
+      <p class="sub" style="margin-top:16px;margin-bottom:0;">New tests appear here automatically once Claude generates them from a request — no need to touch this screen.</p>
+    </div>
+  `;
+}
+
+async function renderRequests(body){
+  const requests = await sbGet('test_requests?select=*&order=created_at.desc');
+  let rows = requests.map(r => `
+    <tr>
+      <td>${r.title}</td>
+      <td><span class="subject-tag">${subjectLabel(r.subject)}</span></td>
+      <td>${r.num_questions}</td>
+      <td><span class="status-chip status-${r.status}">${r.status}</span></td>
+      <td>${new Date(r.created_at).toLocaleDateString()}</td>
+    </tr>
+  `).join('');
+
+  const optionsHtml = SUBJECTS.map(s => `<option value="${s.value}">${s.label}</option>`).join('');
+
+  body.innerHTML = `
+    <div class="panel">
+      <h3 style="margin-top:0;">Request a new mock test</h3>
+      <p class="sub">Describe what you want in plain language. Submitting adds it to the queue below — then, next time you're chatting with Claude, say "check pending test requests" and it'll generate the questions and push them into this database.</p>
+      <div class="row2">
+        <div class="field"><label>Subject</label><select id="reqSubject">${optionsHtml}</select></div>
+        <div class="field"><label>Number of questions</label><input id="reqCount" type="number" value="25" min="5" max="50" /></div>
+      </div>
+      <div class="field"><label>Title</label><input id="reqTitle" placeholder="e.g. Year 5 Verbal Reasoning — Set 2" /></div>
+      <div class="field"><label>Instructions</label><textarea id="reqInstructions" placeholder="e.g. Focus on synonyms, odd-one-out, and letter sequences. Medium difficulty, suitable for a strong Year 5 student. Include a short timed boss round at the end."></textarea></div>
+      <div class="field"><label>Time limit (minutes)</label><input id="reqTime" type="number" value="30" min="5" max="120" /></div>
+      <button class="primary" id="submitReqBtn">Submit request</button>
+      <div id="reqMsg"></div>
+    </div>
+    <div class="panel">
+      <h3 style="margin-top:0;">Requests (${requests.length})</h3>
+      ${requests.length ? `<table><thead><tr><th>Title</th><th>Subject</th><th>Questions</th><th>Status</th><th>Requested</th></tr></thead><tbody>${rows}</tbody></table>` : '<div class="empty">No requests yet.</div>'}
+    </div>
+  `;
+
+  document.getElementById('submitReqBtn').addEventListener('click', async () => {
+    const subject = document.getElementById('reqSubject').value;
+    const title = document.getElementById('reqTitle').value.trim();
+    const instructions = document.getElementById('reqInstructions').value.trim();
+    const numQuestions = parseInt(document.getElementById('reqCount').value, 10) || 25;
+    const timeMin = parseInt(document.getElementById('reqTime').value, 10) || 30;
+    const msg = document.getElementById('reqMsg');
+    if(!title || !instructions){ msg.innerHTML = '<p class="msg error">Title and instructions are required.</p>'; return; }
+    try{
+      await sbPost('test_requests', {
+        subject, title, instructions,
+        num_questions: numQuestions,
+        time_limit_seconds: timeMin * 60,
+        requested_by: adminUser.username,
+        status: 'pending'
+      });
+      msg.innerHTML = '<p class="msg success">Request submitted — ask Claude to process pending requests to generate it.</p>';
+      document.getElementById('reqTitle').value = '';
+      document.getElementById('reqInstructions').value = '';
+      renderApp();
+    } catch(err){
+      console.error(err);
+      msg.innerHTML = '<p class="msg error">Could not submit request.</p>';
+    }
+  });
+}
+
+init();
+</script>
+</body>
+</html>

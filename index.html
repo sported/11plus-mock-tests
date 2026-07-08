@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>11+ Mock Tests</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;
+    --panel:#ffffff;
+    --panel-2:#f7f8fb;
+    --ink:#2b2250;
+    --ink-soft:#6b6693;
+    --line: rgba(43,34,80,0.10);
+
+    --amber:#ffb020; --amber-bg:#fff3d9;
+    --coral:#ff5a6a; --coral-bg:#ffe6e9;
+    --teal:#17b199; --teal-bg:#e2faf5;
+
+    --maths:#2f8fe0; --maths-bg:#eaf4ff;
+    --english:#ff6f91; --english-bg:#ffeff4;
+    --verbal:#8e5ce0; --verbal-bg:#f3ecfe;
+    --nonverbal:#17b199; --nonverbal-bg:#e2faf5;
+    --spellings:#ffa53e; --spellings-bg:#fff4e3;
+
+    --radius: 18px;
+  }
+  *{box-sizing:border-box;}
+  html{ overflow-x: hidden; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text, var(--ink));
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    min-height:100vh;
+    padding: 24px 16px 60px;
+    position: relative;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  .blob{ position:absolute; border-radius:50%; filter: blur(2px); opacity:0.5; z-index:0; }
+  .blob1{ width:180px; height:180px; background: var(--maths-bg); top:-60px; right:-50px; }
+  .blob2{ width:120px; height:120px; background: var(--spellings-bg); top:120px; left:-40px; }
+  .blob3{ width:90px; height:90px; background: var(--english-bg); top:280px; right:10%; }
+
+  .wrap{ max-width: 720px; margin: 0 auto; position:relative; z-index:1; }
+
+  .ticket{
+    background: var(--panel);
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    padding: 22px 24px 20px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 18px rgba(43,34,80,0.06);
+  }
+  .eyebrow{
+    font-family: 'Fredoka', sans-serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight:600;
+    color: var(--teal);
+    margin: 0 0 6px;
+  }
+  h1{
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 27px;
+    margin: 0 0 6px;
+    color: var(--ink);
+  }
+  .sub{ color: var(--ink-soft); font-size: 14px; line-height:1.5; margin: 0; }
+
+  .home-header{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; }
+  .greet{ font-family:'Fredoka', sans-serif; font-size:22px; color:var(--ink); margin:0 0 4px; }
+  .level-chip{
+    display:flex; align-items:center; gap:8px;
+    background: var(--amber-bg);
+    border-radius: 20px;
+    padding: 8px 14px;
+    font-family:'Fredoka', sans-serif;
+    font-weight:600;
+    font-size: 14px;
+    color:#8a5b06;
+    white-space:nowrap;
+  }
+  .logout-link{ background:none; border:none; color:var(--ink-soft); font-size:12.5px; text-decoration:underline; cursor:pointer; padding:0; margin-top:8px; }
+
+  .scoreboard{ display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+  .led{ flex:1; min-width:80px; background: var(--panel-2); border-radius: 12px; padding: 9px 10px; text-align:center; border: 1px solid var(--line); }
+  .led .val{ font-family:'Fredoka', sans-serif; font-size: 18px; color: var(--amber); }
+  .led.timer .val{ color: var(--coral); }
+  .led.timer.warn .val{ animation: pulse 1s infinite; }
+  .led.xp .val{ color: var(--teal); }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+  .led .lab{ font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); margin-top: 2px; font-weight:700; }
+
+  .progress-row{ display:flex; flex-wrap:wrap; gap:5px; margin: 16px 0 4px; }
+  .dot{ width: 16px; height: 6px; border-radius: 3px; background: var(--line); transition: background 0.2s; cursor:pointer; border:none; padding:0; }
+  .dot.boss{ height:9px; margin-top:-1.5px; border-radius: 4px; }
+  .dot.done{ background: var(--teal); }
+  .dot.current{ background: var(--amber); }
+
+  .card{ background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; min-height: 260px; display:flex; flex-direction:column; box-shadow: 0 4px 18px rgba(43,34,80,0.06); }
+  .card.boss{ border: 1.5px solid var(--coral); background: linear-gradient(180deg, var(--coral-bg) 0%, var(--panel) 90px); }
+  .boss-banner{ display:inline-flex; align-items:center; gap:6px; background: var(--coral); color:#fff; font-family:'Fredoka',sans-serif; font-size: 12px; font-weight:600; letter-spacing:0.03em; text-transform:uppercase; padding: 6px 12px; border-radius: 20px; margin-bottom: 12px; width: fit-content; }
+
+  .qmeta{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom: 10px; gap:10px; }
+  .qnum{ font-family:'Fredoka', sans-serif; color: var(--ink-soft); font-size: 13px; }
+  .qmeta-right{ display:flex; align-items:center; gap:10px; }
+  .topic-tag{ font-size: 10.5px; font-weight:700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--teal); background: var(--teal-bg); padding: 4px 10px; border-radius: 20px; white-space:nowrap; }
+  .link-btn{ background:none; border:none; color: var(--amber); font-size: 12.5px; font-weight:700; text-decoration: underline; cursor:pointer; padding:0; white-space:nowrap; }
+  .qtext{ font-size: 18px; line-height: 1.5; margin: 4px 0 20px; color: var(--ink); font-weight:600; }
+
+  .options{ display:flex; flex-direction:column; gap:10px; }
+  .opt{ background: var(--panel-2); border: 2px solid var(--line); color: var(--ink); padding: 13px 16px; border-radius: 14px; text-align:left; font-size: 15px; font-weight:600; cursor:pointer; transition: border-color 0.15s, transform 0.1s; }
+  .opt:hover{ border-color: var(--teal); }
+  .opt.selected{ border-color: var(--amber); background: var(--amber-bg); }
+
+  .input-row{ display:flex; gap:10px; align-items:center; }
+  .input-row input, .name-row input, select.test-select{ flex:1; background: var(--panel-2); border: 2px solid var(--line); color: var(--ink); font-size: 17px; padding: 12px 14px; border-radius: 12px; font-family: 'Nunito', sans-serif; font-weight:700; }
+  .input-row input:focus, .name-row input:focus{ outline: none; border-color: var(--teal); }
+
+  .actions{ margin-top: auto; padding-top: 18px; display:flex; justify-content:space-between; gap:10px; }
+  button.primary{ background: var(--amber); color: #fff; border:none; font-family:'Fredoka', sans-serif; font-weight:600; padding: 12px 22px; border-radius: 14px; font-size: 15px; cursor:pointer; box-shadow: 0 3px 0 #d9910a; }
+  button.primary:active{ transform: translateY(2px); box-shadow: 0 1px 0 #d9910a; }
+  button.primary:disabled{ background: var(--line); color: var(--ink-soft); cursor:not-allowed; box-shadow:none; }
+  button.ghost{ background: transparent; color: var(--ink-soft); border: 2px solid var(--line); padding: 11px 18px; border-radius: 14px; font-size: 14px; font-weight:700; cursor:pointer; font-family:'Nunito',sans-serif;}
+  button.ghost:disabled{ opacity:0.4; cursor:not-allowed; }
+
+  .results h2{ font-family: 'Fredoka', sans-serif; font-size: 24px; margin: 0 0 4px; color: var(--ink); }
+  .big-score{ font-family: 'Fredoka', sans-serif; font-size: 44px; color: var(--amber); margin: 10px 0 2px; }
+  .level-up-banner{ background: var(--amber-bg); border: 2px solid var(--amber); color: #8a5b06; padding: 12px 14px; border-radius: 14px; font-size: 14px; font-weight:700; margin: 14px 0; font-family:'Fredoka',sans-serif;}
+  .badge-row{ display:flex; flex-wrap:wrap; gap:8px; margin: 10px 0 4px; }
+  .badge-chip{ background: var(--teal); color:#fff; font-size: 12.5px; font-weight:700; padding: 7px 13px; border-radius: 20px; font-family:'Fredoka',sans-serif;}
+
+  .breakdown{ margin-top: 22px; display:flex; flex-direction:column; gap:10px; }
+  .bd-row{ display:flex; align-items:center; gap:10px; font-size:13.5px; }
+  .bd-label{ width: 150px; color: var(--ink-soft); flex-shrink:0; font-weight:700; }
+  .bd-bar{ flex:1; height:9px; background: var(--line); border-radius:5px; overflow:hidden; }
+  .bd-fill{ height:100%; background: var(--teal); border-radius:5px; }
+  .bd-frac{ width:38px; text-align:right; font-family: 'Fredoka', sans-serif; color: var(--ink-soft); font-size:12px;}
+
+  .review-list{ margin-top: 14px; display:flex; flex-direction:column; gap:8px; }
+  .review-item{ border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 13.5px; background: var(--panel-2); display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  .review-item.answered{ border-left: 4px solid var(--teal); }
+  .review-item.unanswered{ border-left: 4px solid var(--coral); }
+  .review-item.correct{ border-left: 4px solid var(--teal); }
+  .review-item.wrong{ border-left: 4px solid var(--coral); }
+  .review-item .rq{ color: var(--ink); margin-bottom:5px; font-weight:600; }
+  .review-item .ra{ color: var(--ink-soft); display:flex; gap:14px; flex-wrap:wrap; }
+  .review-item .ra span.label{ color: var(--ink-soft); }
+  .review-item .ra span.val-correct{ color: var(--teal); font-weight:700; }
+  .review-item .ra span.val-wrong{ color: var(--coral); font-weight:700; }
+  .review-item .val-empty{ color: var(--coral); font-style:italic; }
+  .explain-text{ margin-top:8px; padding-top:8px; border-top:1px dashed var(--line); font-size:12.5px; color:var(--ink-soft); line-height:1.5; }
+  .review-left{ flex:1; }
+  .edit-btn{ background: var(--panel); border: 2px solid var(--line); color: var(--ink); font-size: 12px; font-weight:700; padding: 7px 12px; border-radius: 10px; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+  .edit-btn:hover{ border-color: var(--amber); }
+
+  .name-row{ display:flex; flex-direction:column; gap:14px; }
+  .field-label{ font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px; display:block; font-weight:700; }
+  .center-msg{ text-align:center; color:var(--ink-soft); font-size:14px; padding: 40px 10px; }
+
+  /* home tiles */
+  .tiles-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:14px; margin-top: 8px; }
+  .tile{ text-align:left; border:none; cursor:pointer; border-radius: 16px; padding:0; overflow:hidden; background: var(--panel); border: 1px solid var(--line); box-shadow: 0 3px 10px rgba(43,34,80,0.05); transition: transform 0.12s; }
+  .tile:hover{ transform: translateY(-2px); }
+  .tile-top{ padding: 16px 16px 12px; }
+  .tile-icon{ font-size: 26px; margin-bottom:8px; display:block; }
+  .tile-title{ font-family:'Fredoka', sans-serif; font-size:16px; color:var(--ink); margin:0 0 4px; line-height:1.3; }
+  .tile-subject{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; }
+  .tile-meta{ display:flex; gap:10px; font-size:11.5px; color:var(--ink-soft); font-weight:700; margin-top:8px; }
+  .tile-status{ padding:9px 16px; font-size:12.5px; font-weight:700; }
+  .tile-status.done{ background: var(--teal-bg); color:#0d7a68; }
+  .tile-status.todo{ background: var(--panel-2); color:var(--ink-soft); }
+
+  footer.note{ text-align:center; color: var(--ink-soft); font-size: 12px; margin-top: 22px; line-height:1.6; }
+</style>
+</head>
+<body>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+<div class="wrap">
+
+  <div class="ticket" id="ticketHeader">
+    <p class="eyebrow">11+ &middot; Mock Tests</p>
+    <h1 id="titleText">11+ Mock Tests</h1>
+    <p class="sub" id="subText">Loading...</p>
+    <div class="scoreboard" id="scoreboard" style="display:none;">
+      <div class="led"><div class="val" id="ledQ">1/25</div><div class="lab">Question</div></div>
+      <div class="led timer" id="ledTimerBox"><div class="val" id="ledTimer">30:00</div><div class="lab">Time left</div></div>
+      <div class="led xp"><div class="val" id="ledLevel">Lvl 1</div><div class="lab">Level</div></div>
+    </div>
+    <div class="progress-row" id="progressRow"></div>
+  </div>
+
+  <div class="card" id="quizCard"><div class="center-msg">Loading…</div></div>
+
+  <footer class="note">🦉 Practice makes progress — every test earns XP, no calculator needed.</footer>
+</div>
+
+<script>
+const SUPABASE_URL = "https://lytwxeietqrtfrszzbcd.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5dHd4ZWlldHFydGZyc3p6YmNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MzU3MDEsImV4cCI6MjA5OTAxMTcwMX0.r8Mz8IKeeRRVDjNLlD-HmMeEpbsnzfKkiPzltHRaKyQ";
+const LEVEL_STEP = 100;
+const SESSION_KEY = "elevenplus_session";
+
+const SUBJECTS = {
+  maths: { label:'Maths', icon:'🔢', color:'var(--maths)', bg:'var(--maths-bg)' },
+  english: { label:'English', icon:'📚', color:'var(--english)', bg:'var(--english-bg)' },
+  verbal_reasoning: { label:'Verbal Reasoning', icon:'🧩', color:'var(--verbal)', bg:'var(--verbal-bg)' },
+  non_verbal_reasoning: { label:'Non-Verbal Reasoning', icon:'🔷', color:'var(--nonverbal)', bg:'var(--nonverbal-bg)' },
+  spellings: { label:'Spellings', icon:'✏️', color:'var(--spellings)', bg:'var(--spellings-bg)' }
+};
+function subjectInfo(v){ return SUBJECTS[v] || { label:v, icon:'📄', color:'var(--ink-soft)', bg:'var(--panel-2)' }; }
+
+function sbHeaders(extra){
+  return Object.assign({ 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }, extra || {});
+}
+async function sbGet(path){
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, { headers: sbHeaders() });
+  if(!res.ok) throw new Error('Request failed: ' + path);
+  return res.json();
+}
+async function sbPost(path, body, prefer){
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, { method: 'POST', headers: sbHeaders({ 'Prefer': prefer || 'return=representation' }), body: JSON.stringify(body) });
+  if(!res.ok) throw new Error('Insert failed: ' + path + ' ' + (await res.text()));
+  const text = await res.text();
+  return text ? JSON.parse(text) : [];
+}
+async function sbPatch(path, body, prefer){
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, { method: 'PATCH', headers: sbHeaders({ 'Prefer': prefer || 'return=representation' }), body: JSON.stringify(body) });
+  if(!res.ok) throw new Error('Update failed: ' + path);
+  const text = await res.text();
+  return text ? JSON.parse(text) : [];
+}
+async function sha256(text){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+let TOPIC_ORDER = [];
+let QUESTIONS = [];
+let MOCK_TEST = null;
+let ALL_TESTS = [];
+let LATEST_ATTEMPTS = {};
+let TIME_LIMIT = 1800;
+let secondsLeft = 1800;
+let timerInterval = null;
+
+let current = 0;
+let answers = [];
+let finished = false;
+let view = 'setup'; // 'setup' | 'home' | 'question' | 'review' | 'results'
+
+let student = null;
+let existingBadgeKeys = new Set();
+
+const progressRow = document.getElementById('progressRow');
+const quizCard = document.getElementById('quizCard');
+const scoreboard = document.getElementById('scoreboard');
+const titleText = document.getElementById('titleText');
+const subText = document.getElementById('subText');
+const ledQ = document.getElementById('ledQ');
+const ledTimer = document.getElementById('ledTimer');
+const ledTimerBox = document.getElementById('ledTimerBox');
+const ledLevel = document.getElementById('ledLevel');
+
+function normalize(str){
+  return String(str).trim().toLowerCase().replace(/£/g,'').replace(/\s+/g,'').replace(/,/g,'').replace(/−/g,'-');
+}
+
+// Common units a student might reasonably type that the stored correct_answer omits.
+// Ordered longest-first so e.g. 'cm2' is tried before 'cm', 'mm' before 'm'.
+const UNIT_SUFFIXES = ['pence','minutes','hours','mins','hrs','sqcm','cm2','cm²','cm3','cm³','mph','pts','pt','hr','min','kg','mg','ml','km','mm','cm','m','l','g','p','%'];
+
+function stripTrailingUnit(s){
+  for(const u of UNIT_SUFFIXES){
+    if(s.length > u.length && s.endsWith(u)) return s.slice(0, -u.length);
+  }
+  return s;
+}
+
+function answersMatch(userAnswer, correctAnswer){
+  if(userAnswer === null) return false;
+  const u = normalize(userAnswer);
+  const c = normalize(correctAnswer);
+  if(u === c) return true;
+  // allow the student's answer to include a unit the stored answer doesn't (e.g. '8cm' vs '8')
+  if(stripTrailingUnit(u) === c) return true;
+  return false;
+}
+function formatTime(s){
+  const m = Math.floor(s/60); const sec = s % 60;
+  return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+}
+function levelForXp(xp){ return Math.floor(xp / LEVEL_STEP) + 1; }
+
+async function init(){
+  titleText.textContent = '11+ Mock Tests';
+  subText.textContent = 'Loading…';
+  scoreboard.style.display = 'none';
+  progressRow.innerHTML = '';
+  try{
+    ALL_TESTS = await sbGet('mock_tests?select=*&order=created_at.desc');
+    const saved = localStorage.getItem(SESSION_KEY);
+    if(saved){
+      try{
+        const { name, passwordHash } = JSON.parse(saved);
+        const ok = await loadStudentByHash(name, passwordHash);
+        if(ok){ renderHome(); return; }
+      } catch(e){ /* fall through to login */ }
+      localStorage.removeItem(SESSION_KEY);
+    }
+    renderSetup();
+  } catch(err){
+    console.error(err);
+    quizCard.innerHTML = '<div class="center-msg">Could not load tests from the database. Check your connection and reload.</div>';
+  }
+}
+
+function renderSetup(msg){
+  view = 'setup';
+  titleText.textContent = '11+ Mock Tests';
+  subText.textContent = 'Log in to see your tests.';
+  scoreboard.style.display = 'none';
+  progressRow.innerHTML = '';
+
+  quizCard.innerHTML = `
+    <div class="name-row">
+      <form autocomplete="off" onsubmit="return false;">
+      <input type="text" style="position:absolute; left:-9999px; width:1px; height:1px;" tabindex="-1" autocomplete="username" />
+      <input type="password" style="position:absolute; left:-9999px; width:1px; height:1px;" tabindex="-1" autocomplete="new-password" />
+      <div><span class="field-label">Your name</span><input type="text" id="nameInput" name="student_display_name" placeholder="e.g. Alex Smith" autocomplete="off" data-lpignore="true" data-1p-ignore /></div>
+      <div><span class="field-label">Password</span><input type="password" id="passInput" name="student_access_code" autocomplete="new-password" data-lpignore="true" data-1p-ignore /></div>
+      </form>
+      <div class="actions" style="padding-top:6px;"><span></span><button class="primary" id="startBtn" disabled>Log in</button></div>
+      <div id="setupMsg">${msg ? `<p class="sub" style="color:var(--coral);">${msg}</p>` : ''}</div>
+    </div>
+  `;
+  const nameInput = document.getElementById('nameInput');
+  const passInput = document.getElementById('passInput');
+  const startBtn = document.getElementById('startBtn');
+  function checkReady(){ startBtn.disabled = nameInput.value.trim().length === 0 || passInput.value.length === 0; }
+  nameInput.addEventListener('input', checkReady);
+  passInput.addEventListener('input', checkReady);
+  passInput.addEventListener('keydown', (e) => { if(e.key === 'Enter' && !startBtn.disabled) startBtn.click(); });
+
+  startBtn.addEventListener('click', async () => {
+    startBtn.disabled = true; startBtn.textContent = 'Checking…';
+    try{
+      const name = nameInput.value.trim();
+      const hash = await sha256(passInput.value);
+      const ok = await loadStudentByHash(name, hash);
+      if(!ok){
+        renderSetup("Name or password not recognised. Ask your teacher if you don't have an account yet.");
+        return;
+      }
+      localStorage.setItem(SESSION_KEY, JSON.stringify({ name, passwordHash: hash }));
+      renderHome();
+    } catch(err){
+      console.error(err);
+      quizCard.innerHTML = '<div class="center-msg">Something went wrong logging in. Please reload and try again.</div>';
+    }
+  });
+}
+
+async function loadStudentByHash(name, hash){
+  const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/verify_student_login', {
+    method: 'POST',
+    headers: sbHeaders(),
+    body: JSON.stringify({ p_name: name, p_password_hash: hash })
+  });
+  if(!res.ok) return false;
+  const rows = await res.json();
+  if(!rows.length) return false;
+  student = rows[0];
+  const badges = await sbGet('badges?student_id=eq.' + student.id + '&select=badge_key');
+  existingBadgeKeys = new Set(badges.map(b => b.badge_key));
+  return true;
+}
+
+async function renderHome(){
+  view = 'home';
+  quizCard.className = 'card';
+  scoreboard.style.display = 'none';
+  progressRow.innerHTML = '';
+  titleText.textContent = '11+ Mock Tests';
+  ticketHome();
+  quizCard.innerHTML = '<div class="center-msg">Loading your tests…</div>';
+
+  let attempts = [];
+  try{
+    attempts = await sbGet('attempts?student_id=eq.' + student.id + '&select=*&order=submitted_at.desc');
+  } catch(err){ console.error(err); }
+
+  const latestByTest = {};
+  attempts.forEach(a => { if(!latestByTest[a.mock_test_id]) latestByTest[a.mock_test_id] = a; });
+  LATEST_ATTEMPTS = latestByTest;
+
+  if(!ALL_TESTS.length){
+    quizCard.innerHTML = '<div class="center-msg">No mock tests are available yet — check back soon!</div>';
+    return;
+  }
+
+  const tilesHtml = ALL_TESTS.map(t => {
+    const info = subjectInfo(t.subject);
+    const attempt = latestByTest[t.id];
+    const statusHtml = attempt
+      ? `<div class="tile-status done">✅ ${attempt.score}/${attempt.total_questions} &middot; ${Math.round((attempt.score/attempt.total_questions)*100)}% &middot; tap to review</div>`
+      : `<div class="tile-status todo">▶ Not started</div>`;
+    return `
+      <button class="tile" data-test-id="${t.id}">
+        <div class="tile-top" style="background:${info.bg};">
+          <span class="tile-icon">${info.icon}</span>
+          <p class="tile-title">${t.title}</p>
+          <span class="tile-subject" style="color:${info.color};">${info.label}</span>
+          <div class="tile-meta"><span>⏱ ${Math.round((t.time_limit_seconds||0)/60)} min</span></div>
+        </div>
+        ${statusHtml}
+      </button>
+    `;
+  }).join('');
+
+  quizCard.innerHTML = `<div class="tiles-grid">${tilesHtml}</div>`;
+  quizCard.querySelectorAll('.tile').forEach(el => {
+    el.addEventListener('click', async () => {
+      const testId = el.dataset.testId;
+      MOCK_TEST = ALL_TESTS.find(t => t.id === testId);
+      const priorAttempt = LATEST_ATTEMPTS[testId];
+      quizCard.innerHTML = '<div class="center-msg">Loading…</div>';
+      try{
+        if(priorAttempt){
+          await renderPastAttemptReview(priorAttempt);
+        } else {
+          await loadQuestions(testId);
+          beginTest();
+        }
+      } catch(err){
+        console.error(err);
+        quizCard.innerHTML = '<div class="center-msg">Could not load that test. Please try again.</div>';
+      }
+    });
+  });
+}
+
+async function renderPastAttemptReview(attempt){
+  view = 'past-review';
+  quizCard.className = 'card';
+  scoreboard.style.display = 'none';
+  progressRow.innerHTML = '';
+  titleText.textContent = MOCK_TEST.title;
+  subText.textContent = 'Your previous attempt — review below, or retake for a fresh score.';
+
+  let rows = [];
+  try{
+    rows = await sbGet('attempt_answers?attempt_id=eq.' + attempt.id + '&select=student_answer,is_correct,xp_awarded,questions(question_text,correct_answer,explanation,topic,is_boss_round,order_index)');
+    rows.sort((a,b) => (a.questions?.order_index || 0) - (b.questions?.order_index || 0));
+  } catch(err){ console.error(err); }
+
+  const pct = Math.round((attempt.score/attempt.total_questions)*100);
+  const dateStr = attempt.submitted_at ? new Date(attempt.submitted_at).toLocaleDateString() : '';
+
+  let reviewHtml = '<div class="review-list">';
+  rows.forEach((r, i) => {
+    const q = r.questions || {};
+    reviewHtml += `
+      <div class="review-item ${r.is_correct ? 'correct' : 'wrong'}">
+        <div class="review-left">
+          <div class="rq">Q${i+1}${q.is_boss_round ? ' ⚔' : ''}. ${q.question_text || ''}</div>
+          <div class="ra"><span><span class="label">Your answer:</span> <span class="${r.is_correct ? 'val-correct' : 'val-wrong'}">${r.student_answer !== null ? r.student_answer : '(no answer)'}</span></span><span><span class="label">Correct answer:</span> <span class="val-correct">${q.correct_answer || ''}</span></span></div>
+          ${q.explanation ? `<div class="explain-text">${q.explanation}</div>` : ''}
+        </div>
+      </div>
+    `;
+  });
+  reviewHtml += '</div>';
+
+  quizCard.innerHTML = `
+    <div class="results">
+      <h2>Previous attempt${dateStr ? ' — ' + dateStr : ''}</h2>
+      <div class="big-score">${attempt.score}/${attempt.total_questions}</div>
+      <p class="sub" style="margin:0 0 4px;">${pct}% correct &middot; +${attempt.xp_earned || 0} XP earned</p>
+      ${reviewHtml}
+      <div class="actions" style="justify-content:space-between; margin-top:24px;">
+        <button class="ghost" id="pastBackBtn">Back to my tests</button>
+        <button class="primary" id="retakeBtn">Retake test</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('pastBackBtn').addEventListener('click', () => { renderHome(); });
+  document.getElementById('retakeBtn').addEventListener('click', async () => {
+    quizCard.innerHTML = '<div class="center-msg">Loading test…</div>';
+    try{
+      await loadQuestions(MOCK_TEST.id);
+      beginTest();
+    } catch(err){
+      console.error(err);
+      quizCard.innerHTML = '<div class="center-msg">Could not load that test. Please try again.</div>';
+    }
+  });
+}
+
+function ticketHome(){
+  const header = document.getElementById('ticketHeader');
+  header.innerHTML = `
+    <p class="eyebrow">11+ &middot; Mock Tests</p>
+    <div class="home-header">
+      <div>
+        <p class="greet">Hi ${student.name} 👋</p>
+        <p class="sub">Pick a test to get started.</p>
+        <button class="logout-link" id="logoutBtn">Not you? Log out</button>
+      </div>
+      <div class="level-chip">🏆 Level ${student.level} &middot; ${student.total_xp} XP</div>
+    </div>
+  `;
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem(SESSION_KEY);
+    student = null;
+    rebuildTicketDefault();
+    renderSetup();
+  });
+}
+function rebuildTicketDefault(){
+  document.getElementById('ticketHeader').innerHTML = `
+    <p class="eyebrow">11+ &middot; Mock Tests</p>
+    <h1 id="titleText">11+ Mock Tests</h1>
+    <p class="sub" id="subText">Log in to see your tests.</p>
+    <div class="scoreboard" id="scoreboard" style="display:none;">
+      <div class="led"><div class="val" id="ledQ">1/25</div><div class="lab">Question</div></div>
+      <div class="led timer" id="ledTimerBox"><div class="val" id="ledTimer">30:00</div><div class="lab">Time left</div></div>
+      <div class="led xp"><div class="val" id="ledLevel">Lvl 1</div><div class="lab">Level</div></div>
+    </div>
+    <div class="progress-row" id="progressRow"></div>
+  `;
+}
+function ticketQuiz(){
+  document.getElementById('ticketHeader').innerHTML = `
+    <p class="eyebrow">11+ &middot; Mock Tests</p>
+    <h1 id="titleText">${MOCK_TEST.title}</h1>
+    <p class="sub" id="subText">${(MOCK_TEST.description || '')} The last few questions are a timed Boss Round worth double XP.</p>
+    <div class="scoreboard" id="scoreboard">
+      <div class="led"><div class="val" id="ledQ">1/${QUESTIONS.length}</div><div class="lab">Question</div></div>
+      <div class="led timer" id="ledTimerBox"><div class="val" id="ledTimer">${formatTime(secondsLeft)}</div><div class="lab">Time left</div></div>
+      <div class="led xp"><div class="val" id="ledLevel">Lvl ${student.level}</div><div class="lab">Level</div></div>
+    </div>
+    <div class="progress-row" id="progressRow"></div>
+  `;
+}
+
+async function loadQuestions(testId){
+  const rows = await sbGet('questions?mock_test_id=eq.' + testId + '&select=*&order=order_index.asc');
+  QUESTIONS = rows.map(r => ({ id:r.id, topic:r.topic, type:r.type, q:r.question_text, options:r.options, answer:r.correct_answer, isBoss:r.is_boss_round, xp:r.xp_value, explanation:r.explanation }));
+  TOPIC_ORDER = [...new Set(QUESTIONS.map(q => q.topic))];
+  TIME_LIMIT = MOCK_TEST.time_limit_seconds || 1800;
+  secondsLeft = TIME_LIMIT;
+  answers = new Array(QUESTIONS.length).fill(null);
+}
+
+function beginTest(){
+  current = 0; finished = false; view = 'question';
+  ticketQuiz();
+  // re-bind live elements after ticket rebuild
+  window.ledQEl = document.getElementById('ledQ');
+  window.ledTimerEl = document.getElementById('ledTimer');
+  window.ledTimerBoxEl = document.getElementById('ledTimerBox');
+  window.ledLevelEl = document.getElementById('ledLevel');
+  window.progressRowEl = document.getElementById('progressRow');
+  initDots();
+  renderQuestion();
+  startTimer();
+}
+
+function initDots(){
+  const pr = document.getElementById('progressRow');
+  pr.innerHTML = '';
+  QUESTIONS.forEach((q, i) => {
+    const d = document.createElement('button');
+    d.className = 'dot' + (q.isBoss ? ' boss' : '');
+    d.id = 'dot-' + i;
+    d.type = 'button';
+    d.title = 'Question ' + (i+1) + (q.isBoss ? ' (Boss Round)' : '');
+    d.addEventListener('click', () => { if(finished) return; saveCurrentAnswerIfOnQuestion(); goToQuestion(i); });
+    pr.appendChild(d);
+  });
+}
+function refreshDots(){
+  QUESTIONS.forEach((_, i) => {
+    const d = document.getElementById('dot-' + i);
+    if(!d) return;
+    d.classList.remove('current','done');
+    if(view === 'question' && i === current) d.classList.add('current');
+    else if(answers[i] !== null) d.classList.add('done');
+  });
+}
+
+function startTimer(){
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    const timerEl = document.getElementById('ledTimer');
+    const timerBoxEl = document.getElementById('ledTimerBox');
+    if(secondsLeft <= 0){
+      secondsLeft = 0;
+      if(timerEl) timerEl.textContent = formatTime(0);
+      clearInterval(timerInterval);
+      saveCurrentAnswerIfOnQuestion();
+      gradeAndShowResults();
+      return;
+    }
+    if(timerEl) timerEl.textContent = formatTime(secondsLeft);
+    if(secondsLeft <= 60 && timerBoxEl) timerBoxEl.classList.add('warn');
+  }, 1000);
+}
+
+function saveCurrentAnswerIfOnQuestion(){
+  if(view !== 'question') return;
+  const item = QUESTIONS[current];
+  if(item.type === 'mcq'){
+    const sel = quizCard.querySelector('.opt.selected');
+    answers[current] = sel ? sel.dataset.val : answers[current];
+  } else {
+    const input = document.getElementById('answerInput');
+    if(input){ const v = input.value.trim(); answers[current] = v.length ? v : answers[current]; }
+  }
+}
+function updateLedQ(){
+  const el = document.getElementById('ledQ');
+  if(el) el.textContent = Math.min(current+1, QUESTIONS.length) + '/' + QUESTIONS.length;
+}
+function goToQuestion(idx){ current = idx; view = 'question'; renderQuestion(); }
+
+function renderQuestion(){
+  updateLedQ();
+  refreshDots();
+  const item = QUESTIONS[current];
+  const existing = answers[current];
+
+  let html = item.isBoss ? '<div class="boss-banner">⚔ Boss round — double XP</div>' : '';
+  html += `
+    <div class="qmeta">
+      <span class="qnum">Q${current+1} of ${QUESTIONS.length}</span>
+      <div class="qmeta-right"><span class="topic-tag">${item.topic}</span><button class="link-btn" id="reviewLink">Review all answers</button></div>
+    </div>
+    <div class="qtext">${item.q}</div>
+  `;
+  if(item.type === 'mcq'){
+    html += '<div class="options" id="optionsWrap">';
+    (item.options || []).forEach(opt => {
+      const sel = existing === opt ? ' selected' : '';
+      html += `<button class="opt${sel}" data-val="${opt}">${opt}</button>`;
+    });
+    html += '</div>';
+  } else {
+    html += `<div class="input-row"><input type="text" id="answerInput" placeholder="Type your answer" autocomplete="off" value="${existing ? existing.replace(/"/g,'&quot;') : ''}" /></div>`;
+  }
+  html += `
+    <div class="actions">
+      <button class="ghost" id="prevBtn" ${current === 0 ? 'disabled' : ''}>Back</button>
+      <button class="primary" id="nextBtn" ${existing ? '' : 'disabled'}>${current === QUESTIONS.length - 1 ? 'Review answers' : 'Next question'}</button>
+    </div>
+  `;
+  quizCard.className = 'card' + (item.isBoss ? ' boss' : '');
+  quizCard.innerHTML = html;
+
+  document.getElementById('reviewLink').addEventListener('click', () => { saveCurrentAnswerIfOnQuestion(); renderReview(); });
+  document.getElementById('prevBtn').addEventListener('click', () => { saveCurrentAnswerIfOnQuestion(); goToQuestion(current - 1); });
+
+  const nextBtn = document.getElementById('nextBtn');
+  if(item.type === 'mcq'){
+    const buttons = quizCard.querySelectorAll('.opt');
+    buttons.forEach(b => {
+      b.addEventListener('click', () => {
+        buttons.forEach(x => x.classList.remove('selected'));
+        b.classList.add('selected');
+        answers[current] = b.dataset.val;
+        nextBtn.disabled = false;
+      });
+    });
+  } else {
+    const input = document.getElementById('answerInput');
+    input.addEventListener('input', () => { nextBtn.disabled = input.value.trim().length === 0; });
+    input.addEventListener('keydown', (e) => { if(e.key === 'Enter' && !nextBtn.disabled) nextBtn.click(); });
+  }
+  nextBtn.addEventListener('click', () => {
+    saveCurrentAnswerIfOnQuestion();
+    if(current === QUESTIONS.length - 1) renderReview(); else goToQuestion(current + 1);
+  });
+}
+
+function renderReview(){
+  view = 'review';
+  quizCard.className = 'card';
+  refreshDots();
+  const answeredCount = answers.filter(a => a !== null).length;
+  let listHtml = '<div class="review-list">';
+  QUESTIONS.forEach((item, i) => {
+    const val = answers[i];
+    listHtml += `
+      <div class="review-item ${val !== null ? 'answered' : 'unanswered'}">
+        <div class="review-left">
+          <div class="rq">Q${i+1}${item.isBoss ? ' ⚔' : ''}. ${item.q}</div>
+          <div class="ra"><span><span class="label">Your answer:</span> ${val !== null ? val : '<span class="val-empty">Not answered</span>'}</span><span class="topic-tag" style="font-size:10px;">${item.topic}</span></div>
+        </div>
+        <button class="edit-btn" data-idx="${i}">Edit</button>
+      </div>
+    `;
+  });
+  listHtml += '</div>';
+  quizCard.innerHTML = `
+    <div class="results">
+      <h2>Review your answers</h2>
+      <p class="sub" style="margin:0 0 4px;">${answeredCount} of ${QUESTIONS.length} answered. Tap Edit on any question to change your answer, then submit when you're ready.</p>
+      ${listHtml}
+      <div class="actions" style="justify-content:space-between; margin-top:20px;">
+        <button class="ghost" id="backToQBtn">Back to last question</button>
+        <button class="primary" id="submitBtn">Submit test</button>
+      </div>
+    </div>
+  `;
+  quizCard.querySelectorAll('.edit-btn').forEach(b => { b.addEventListener('click', () => goToQuestion(parseInt(b.dataset.idx, 10))); });
+  document.getElementById('backToQBtn').addEventListener('click', () => goToQuestion(QUESTIONS.length - 1));
+  document.getElementById('submitBtn').addEventListener('click', () => {
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('submitBtn').textContent = 'Submitting…';
+    gradeAndShowResults();
+  });
+}
+
+async function gradeAndShowResults(){
+  if(finished) return;
+  finished = true; view = 'results';
+  clearInterval(timerInterval);
+  quizCard.className = 'card';
+
+  const total = QUESTIONS.length;
+  const graded = QUESTIONS.map((item, i) => {
+    const userAnswer = answers[i];
+    const correct = answersMatch(userAnswer, item.answer);
+    return { item, userAnswer, correct, xpAwarded: correct ? item.xp : 0 };
+  });
+  const score = graded.filter(g => g.correct).length;
+  const pct = Math.round((score/total)*100);
+  const timeUsed = TIME_LIMIT - secondsLeft;
+  const xpEarned = graded.reduce((sum, g) => sum + g.xpAwarded, 0);
+
+  const byTopic = {};
+  graded.forEach(g => {
+    const t = g.item.topic;
+    if(!byTopic[t]) byTopic[t] = {correct:0, total:0};
+    byTopic[t].total++;
+    if(g.correct) byTopic[t].correct++;
+  });
+
+  const newlyEarnedBadges = [];
+  Object.keys(byTopic).forEach(t => {
+    const {correct, total: tt} = byTopic[t];
+    if(correct === tt){
+      const key = t.toLowerCase().replace(/[^a-z0-9]+/g,'_') + '_whiz';
+      if(!existingBadgeKeys.has(key)) newlyEarnedBadges.push({ key, label: t + ' Whiz', topic: t });
+    }
+  });
+
+  const newTotalXp = student.total_xp + xpEarned;
+  const newLevel = levelForXp(newTotalXp);
+  const leveledUp = newLevel > student.level;
+
+  quizCard.innerHTML = '<div class="center-msg">Saving your results…</div>';
+
+  try{
+    const attemptRows = await sbPost('attempts', {
+      student_id: student.id, mock_test_id: MOCK_TEST.id, score, total_questions: total,
+      xp_earned: xpEarned, time_used_seconds: timeUsed, submitted_at: new Date().toISOString()
+    });
+    const attemptId = attemptRows[0].id;
+    const answerRows = graded.map(g => ({ attempt_id: attemptId, question_id: g.item.id, student_answer: g.userAnswer, is_correct: g.correct, xp_awarded: g.xpAwarded }));
+    await sbPost('attempt_answers', answerRows, 'return=minimal');
+    if(newlyEarnedBadges.length){
+      await sbPost('badges?on_conflict=student_id,badge_key', newlyEarnedBadges.map(b => ({ student_id: student.id, badge_key: b.key, badge_label: b.label, topic: b.topic })), 'return=minimal,resolution=ignore-duplicates');
+      newlyEarnedBadges.forEach(b => existingBadgeKeys.add(b.key));
+    }
+    await sbPatch('students?id=eq.' + student.id, { total_xp: newTotalXp, level: newLevel }, 'return=minimal');
+    student.total_xp = newTotalXp; student.level = newLevel;
+  } catch(err){ console.error(err); }
+
+  renderResultsScreen(graded, score, total, pct, timeUsed, xpEarned, newTotalXp, newLevel, leveledUp, newlyEarnedBadges, byTopic);
+}
+
+function renderResultsScreen(graded, score, total, pct, timeUsed, xpEarned, newTotalXp, newLevel, leveledUp, newlyEarnedBadges, byTopic){
+  const lvlEl = document.getElementById('ledLevel');
+  if(lvlEl) lvlEl.textContent = 'Lvl ' + newLevel;
+
+  let breakdownHtml = '<div class="breakdown">';
+  TOPIC_ORDER.forEach(t => {
+    if(!byTopic[t]) return;
+    const {correct, total: tt} = byTopic[t];
+    const p = Math.round((correct/tt)*100);
+    breakdownHtml += `<div class="bd-row"><div class="bd-label">${t}</div><div class="bd-bar"><div class="bd-fill" style="width:${p}%"></div></div><div class="bd-frac">${correct}/${tt}</div></div>`;
+  });
+  breakdownHtml += '</div>';
+
+  let reviewHtml = '<div class="review-list">';
+  graded.forEach((g, i) => {
+    reviewHtml += `
+      <div class="review-item ${g.correct ? 'correct' : 'wrong'}">
+        <div class="review-left">
+          <div class="rq">Q${i+1}${g.item.isBoss ? ' ⚔' : ''}. ${g.item.q}</div>
+          <div class="ra"><span><span class="label">Your answer:</span> <span class="${g.correct ? 'val-correct' : 'val-wrong'}">${g.userAnswer !== null ? g.userAnswer : '(no answer)'}</span></span><span><span class="label">Correct answer:</span> <span class="val-correct">${g.item.answer}</span></span></div>
+          ${g.item.explanation ? `<div class="explain-text">${g.item.explanation}</div>` : ''}
+        </div>
+      </div>
+    `;
+  });
+  reviewHtml += '</div>';
+
+  let message;
+  if(pct >= 85) message = "Amazing work — strong across almost every topic! 🌟";
+  else if(pct >= 65) message = "Solid result — a couple of topics are worth another look.";
+  else if(pct >= 40) message = "Good starting point. Let's focus on the topics below one at a time.";
+  else message = "This has flagged the right areas to work on next — that's exactly what a mock is for.";
+
+  const badgeHtml = newlyEarnedBadges.length ? `<div class="badge-row">${newlyEarnedBadges.map(b => `<span class="badge-chip">🏅 ${b.label}</span>`).join('')}</div>` : '';
+  const levelBanner = leveledUp ? `<div class="level-up-banner">🎉 Level up! You're now Level ${newLevel}.</div>` : '';
+
+  quizCard.innerHTML = `
+    <div class="results">
+      <h2>Test complete, ${student.name}! 🎉</h2>
+      <p class="sub" style="margin:0;">${message}</p>
+      <div class="big-score">${score}/${total}</div>
+      <p class="sub" style="margin:0 0 4px;">${pct}% correct &middot; ${formatTime(timeUsed)} used &middot; +${xpEarned} XP (total ${newTotalXp} XP)</p>
+      ${levelBanner}${badgeHtml}${breakdownHtml}
+      <p class="sub" style="margin-top:20px;">Full answer summary:</p>
+      ${reviewHtml}
+      <div class="actions" style="justify-content:flex-start; margin-top:24px;">
+        <button class="primary" id="homeBtn">Back to my tests</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('homeBtn').addEventListener('click', () => { renderHome(); });
+}
+
+init();
+</script>
+</body>
+</html>
