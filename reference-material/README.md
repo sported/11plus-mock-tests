@@ -27,7 +27,25 @@ Real 11+ verbal reasoning paper (CGP "Assessment Test 7", pages 67–70), provid
 
 This platform is text-only — it cannot render pie charts, bar charts, Venn diagrams, coordinate grids, or images. When a reference question relies on a diagram, **describe the same data as a text list or table in the question_text** instead (e.g. "A survey found: 12 people like apples, 8 like bananas..." rather than an actual pie chart). This is already established practice — see the Foundations Mock Test's survey question for a working example. Don't skip these question *types* just because the platform can't draw the picture; describing the data in words preserves the same reasoning skill (reading and interpreting a data set) that the real question tests.
 
+### English (Assessment Test 6)
+- **cgp-assessment-test-6-page68-cover.jpeg** — Test instructions, opening of a fiction comprehension passage ("The Blizzard") with plot/character questions (Q1–2).
+- **cgp-assessment-test-6-page71.jpeg** — More fiction comprehension: character actions, true/false statement identification, "put these events in order" sequencing (Q3–7).
+- **cgp-assessment-test-6-page72.jpeg** — Language analysis on the same passage: vocabulary-in-context ("which phrase could replace X"), identifying colours/descriptive meaning, inferring authorial intent, identifying adverbs, identifying literary techniques (metaphor/simile/personification/alliteration/onomatopoeia) (Q8–12).
+- **cgp-assessment-test-6-page73.jpeg** — A short original poem ("Travel" by R.L. Stevenson, adapted) followed by comprehension questions (what is the poem about, what does a phrase mean) (Q13–14).
+- **cgp-assessment-test-6-page74.jpeg** — More poem comprehension: true/false statements, "which of these best describes what X is doing" (inference about animal behaviour in the poem), mood identification, "which place is NOT mentioned" (Q15–19).
+- **cgp-assessment-test-6-page75.jpeg** — More language-in-context questions on the poem: word meaning ("what is a spire"), identifying parts of speech (verb), word meaning in context, word class (proper noun), technique identification (simile) (Q20–24).
+- **cgp-assessment-test-6-page76.jpeg** — Punctuation error spotting in a passage (sentence split into labelled sections A/B/C/D, circle the one with the error or N for none) (Q25–29), then cloze/word-choice questions (pick the correct word from 5 given options to fill a gap in a passage) (Q30–35).
+- **cgp-assessment-test-6-page77.jpeg** — Spelling error spotting in a passage, same A/B/C/D/N labelled-section format as the punctuation section (Q36–40).
+
+## Adapting English question types to this platform
+
+- **Reading/poetry comprehension** maps directly to `mcq` — but since this platform shows one question at a time with no persistent shared passage, **repeat the passage (or a shortened original one) in every question's `question_text`** that refers to it, not just the first.
+- **Cloze/word-choice** (pick the right word from an inline list) maps directly to `mcq` — this is one of the cleanest, most natural fits on the whole platform.
+- **Spelling/punctuation error-spotting** (labelled sections A/B/C/D + N for "no error") adapts well to `mcq`: write a single sentence, offer 4–5 candidate words/parts as lettered options, and include a "No mistake" option to preserve the real test's N-equivalent. Keep exactly one genuine error per question — don't accidentally write two errors into the same sentence.
+- **Literary technique identification** (metaphor/simile/personification/alliteration/onomatopoeia) maps directly to `mcq` and works well paired with the reading/poetry passages.
+
 ## Key takeaways for generation
 
 - **Verbal reasoning** is far more varied than synonym/antonym/analogy multiple choice — it includes numerical-letter arithmetic, coded words, logic deduction with 5 answer options, and word-transformation puzzles with a rule to infer from examples. See the "Verbal/Non-Verbal Reasoning puzzle types" section of `mock_test_generation_guide.md` for how each maps onto this platform's mcq/input format.
 - **Maths** genuinely mixes input (write-in) and multiple-choice roughly evenly, not MCQ-first — calculation questions naturally suit input, while classification/estimation/comparison questions suit MCQ. Follow that natural split rather than forcing everything to MCQ. Real papers lean heavily on word problems grounded in everyday scenarios (shopping, timetables, recipes, sports data) rather than bare arithmetic — favour that framing.
+- **English** is almost entirely MCQ in the real papers — comprehension, cloze, and error-spotting all suit multiple choice naturally. Cover the full range: reading comprehension (fiction), poetry comprehension, vocabulary-in-context, literary technique identification, spelling error-spotting, punctuation error-spotting, and cloze/word-choice — not just one of these types.
