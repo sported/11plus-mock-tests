@@ -358,6 +358,8 @@ function formatTime(s){
 }
 function levelForXp(xp){ return Math.floor(xp / LEVEL_STEP) + 1; }
 function rewardThreshold(total){ return Math.floor(total * 0.75) + 1; }
+function pointsFor(item){ return item.isBoss ? 2 : 1; }
+function maxPoints(questions){ return questions.reduce((sum, q) => sum + pointsFor(q), 0); }
 function formatWallet(cents){
   const dollars = cents / 100;
   return '$' + (cents % 100 === 0 ? dollars.toString() : dollars.toFixed(2));
@@ -534,7 +536,7 @@ async function renderPastAttemptReview(attempt){
     reviewHtml += `
       <div class="review-item ${r.is_correct ? 'correct' : 'wrong'}">
         <div class="review-left">
-          <div class="rq">Q${i+1}${q.is_boss_round ? ' ⚔' : ''}. ${q.question_text || ''}</div>
+          <div class="rq">Q${i+1}${q.is_boss_round ? ' ⚔ (2 points)' : ''}. ${q.question_text || ''}</div>
           <div class="ra"><span><span class="label">Your answer:</span> <span class="${r.is_correct ? 'val-correct' : 'val-wrong'}">${r.student_answer !== null ? r.student_answer : '(no answer)'}</span></span><span><span class="label">Correct answer:</span> <span class="val-correct">${q.correct_answer || ''}</span></span></div>
           ${q.explanation ? `<div class="explain-text">${q.explanation}</div>` : ''}
         </div>
@@ -607,12 +609,13 @@ function rebuildTicketDefault(){
   `;
 }
 function ticketQuiz(){
-  const threshold = rewardThreshold(QUESTIONS.length);
+  const maxPossible = maxPoints(QUESTIONS);
+  const threshold = rewardThreshold(maxPossible);
   document.getElementById('ticketHeader').innerHTML = `
     <p class="eyebrow">11+ &middot; Mock Tests</p>
     <h1 id="titleText">${MOCK_TEST.title}</h1>
-    <p class="sub" id="subText">${(MOCK_TEST.description || '')} The last few questions are a timed Boss Round worth double XP.</p>
-    <div class="reward-callout">🎯 Get <strong>${threshold} or more</strong> correct (out of ${QUESTIONS.length}) to earn <strong>$2</strong>!</div>
+    <p class="sub" id="subText">${(MOCK_TEST.description || '')} The last few questions are a timed Boss Round worth double points and double XP.</p>
+    <div class="reward-callout">🎯 Score <strong>${threshold} or more points</strong> (out of ${maxPossible} possible — boss round ⚔ questions count double) to earn <strong>$2</strong>!</div>
     <div class="scoreboard" id="scoreboard">
       <div class="led"><div class="val" id="ledQ">1/${QUESTIONS.length}</div><div class="lab">Question</div></div>
       <div class="led timer" id="ledTimerBox"><div class="val" id="ledTimer">${formatTime(secondsLeft)}</div><div class="lab">Time left</div></div>
@@ -709,7 +712,7 @@ function renderQuestion(){
   const item = QUESTIONS[current];
   const existing = answers[current];
 
-  let html = item.isBoss ? '<div class="boss-banner">⚔ Boss round — double XP</div>' : '';
+  let html = item.isBoss ? '<div class="boss-banner">⚔ Boss round — worth 2 points + double XP</div>' : '';
   html += `
     <div class="qmeta">
       <span class="qnum">Q${current+1} of ${QUESTIONS.length}</span>
@@ -772,7 +775,7 @@ function renderReview(){
     listHtml += `
       <div class="review-item ${val !== null ? 'answered' : 'unanswered'}">
         <div class="review-left">
-          <div class="rq">Q${i+1}${item.isBoss ? ' ⚔' : ''}. ${item.q}</div>
+          <div class="rq">Q${i+1}${item.isBoss ? ' ⚔ (2 points)' : ''}. ${item.q}</div>
           <div class="ra"><span><span class="label">Your answer:</span> ${val !== null ? val : '<span class="val-empty">Not answered</span>'}</span><span class="topic-tag" style="font-size:10px;">${item.topic}</span></div>
         </div>
         <button class="edit-btn" data-idx="${i}">Edit</button>
@@ -806,13 +809,13 @@ async function gradeAndShowResults(){
   clearInterval(timerInterval);
   quizCard.className = 'card';
 
-  const total = QUESTIONS.length;
+  const total = maxPoints(QUESTIONS);
   const graded = QUESTIONS.map((item, i) => {
     const userAnswer = answers[i];
     const correct = answersMatch(userAnswer, item.answer);
-    return { item, userAnswer, correct, xpAwarded: correct ? item.xp : 0 };
+    return { item, userAnswer, correct, xpAwarded: correct ? item.xp : 0, points: pointsFor(item) };
   });
-  const score = graded.filter(g => g.correct).length;
+  const score = graded.filter(g => g.correct).reduce((sum, g) => sum + g.points, 0);
   const pct = Math.round((score/total)*100);
   const timeUsed = TIME_LIMIT - secondsLeft;
   const xpEarned = graded.reduce((sum, g) => sum + g.xpAwarded, 0);
@@ -881,7 +884,7 @@ function renderResultsScreen(graded, score, total, pct, timeUsed, xpEarned, newT
     reviewHtml += `
       <div class="review-item ${g.correct ? 'correct' : 'wrong'}">
         <div class="review-left">
-          <div class="rq">Q${i+1}${g.item.isBoss ? ' ⚔' : ''}. ${g.item.q}</div>
+          <div class="rq">Q${i+1}${g.item.isBoss ? ' ⚔ (2 points)' : ''}. ${g.item.q}</div>
           <div class="ra"><span><span class="label">Your answer:</span> <span class="${g.correct ? 'val-correct' : 'val-wrong'}">${g.userAnswer !== null ? g.userAnswer : '(no answer)'}</span></span><span><span class="label">Correct answer:</span> <span class="val-correct">${g.item.answer}</span></span></div>
           ${g.item.explanation ? `<div class="explain-text">${g.item.explanation}</div>` : ''}
         </div>
