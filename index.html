@@ -88,6 +88,64 @@
   }
   .logout-link{ background:none; border:none; color:var(--ink-soft); font-size:12.5px; text-decoration:underline; cursor:pointer; padding:0; margin-top:8px; }
 
+  .wallet-banner{
+    margin-top: 16px;
+    background: linear-gradient(135deg, var(--teal-bg) 0%, var(--amber-bg) 100%);
+    border: 1.5px solid var(--teal);
+    border-radius: 16px;
+    padding: 16px 20px;
+    text-align: center;
+  }
+  .wallet-label{ font-family:'Fredoka', sans-serif; font-size: 13px; font-weight:600; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; }
+  .wallet-amount{ font-family:'Fredoka', sans-serif; font-size: 44px; font-weight: 700; color: #0d7a68; line-height: 1.2; margin: 2px 0; }
+  .wallet-sub{ font-size: 12px; color: var(--ink-soft); }
+
+  .reward-callout{
+    margin-top: 12px;
+    background: var(--amber-bg);
+    border: 1.5px dashed var(--amber);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 13.5px;
+    color: #8a5b06;
+    text-align: center;
+  }
+
+  .reward-banner{
+    margin: 14px 0;
+    background: linear-gradient(135deg, var(--teal-bg) 0%, var(--amber-bg) 100%);
+    border: 2px solid var(--teal);
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+  }
+  .reward-banner-big{ font-family:'Fredoka', sans-serif; font-size: 24px; font-weight: 700; color: #0d7a68; }
+  .reward-banner-sub{ font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+  .reward-miss-banner{
+    margin: 14px 0;
+    background: var(--panel-2);
+    border: 1.5px dashed var(--line);
+    border-radius: 14px;
+    padding: 14px;
+    text-align: center;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+  }
+
+  .confetti-layer{ position: fixed; inset: 0; pointer-events: none; z-index: 999; overflow: hidden; }
+  .confetti-piece{
+    position: absolute;
+    top: -20px;
+    border-radius: 2px;
+    animation-name: confetti-fall;
+    animation-timing-function: ease-in;
+    animation-fill-mode: forwards;
+  }
+  @keyframes confetti-fall{
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(600deg); opacity: 0.9; }
+  }
+
   .scoreboard{ display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
   .led{ flex:1; min-width:80px; background: var(--panel-2); border-radius: 12px; padding: 9px 10px; text-align:center; border: 1px solid var(--line); }
   .led .val{ font-family:'Fredoka', sans-serif; font-size: 18px; color: var(--amber); }
@@ -299,6 +357,11 @@ function formatTime(s){
   return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
 }
 function levelForXp(xp){ return Math.floor(xp / LEVEL_STEP) + 1; }
+function rewardThreshold(total){ return Math.floor(total * 0.75) + 1; }
+function formatWallet(cents){
+  const dollars = cents / 100;
+  return '$' + (cents % 100 === 0 ? dollars.toString() : dollars.toFixed(2));
+}
 
 async function init(){
   titleText.textContent = '11+ Mock Tests';
@@ -517,6 +580,11 @@ function ticketHome(){
       </div>
       <div class="level-chip">🏆 Level ${student.level} &middot; ${student.total_xp} XP</div>
     </div>
+    <div class="wallet-banner">
+      <div class="wallet-label">💰 Your wallet</div>
+      <div class="wallet-amount">${formatWallet(student.wallet_cents || 0)}</div>
+      <div class="wallet-sub">Score more than 75% on any test to earn $2</div>
+    </div>
   `;
   document.getElementById('logoutBtn').addEventListener('click', () => {
     localStorage.removeItem(SESSION_KEY);
@@ -539,10 +607,12 @@ function rebuildTicketDefault(){
   `;
 }
 function ticketQuiz(){
+  const threshold = rewardThreshold(QUESTIONS.length);
   document.getElementById('ticketHeader').innerHTML = `
     <p class="eyebrow">11+ &middot; Mock Tests</p>
     <h1 id="titleText">${MOCK_TEST.title}</h1>
     <p class="sub" id="subText">${(MOCK_TEST.description || '')} The last few questions are a timed Boss Round worth double XP.</p>
+    <div class="reward-callout">🎯 Get <strong>${threshold} or more</strong> correct (out of ${QUESTIONS.length}) to earn <strong>$2</strong>!</div>
     <div class="scoreboard" id="scoreboard">
       <div class="led"><div class="val" id="ledQ">1/${QUESTIONS.length}</div><div class="lab">Question</div></div>
       <div class="led timer" id="ledTimerBox"><div class="val" id="ledTimer">${formatTime(secondsLeft)}</div><div class="lab">Time left</div></div>
@@ -768,6 +838,10 @@ async function gradeAndShowResults(){
   const newLevel = levelForXp(newTotalXp);
   const leveledUp = newLevel > student.level;
 
+  const threshold = rewardThreshold(total);
+  const earnedReward = score >= threshold;
+  const newWalletCents = (student.wallet_cents || 0) + (earnedReward ? 200 : 0);
+
   quizCard.innerHTML = '<div class="center-msg">Saving your results…</div>';
 
   try{
@@ -782,14 +856,14 @@ async function gradeAndShowResults(){
       await sbPost('badges?on_conflict=student_id,badge_key', newlyEarnedBadges.map(b => ({ student_id: student.id, badge_key: b.key, badge_label: b.label, topic: b.topic })), 'return=minimal,resolution=ignore-duplicates');
       newlyEarnedBadges.forEach(b => existingBadgeKeys.add(b.key));
     }
-    await sbPatch('students?id=eq.' + student.id, { total_xp: newTotalXp, level: newLevel }, 'return=minimal');
-    student.total_xp = newTotalXp; student.level = newLevel;
+    await sbPatch('students?id=eq.' + student.id, { total_xp: newTotalXp, level: newLevel, wallet_cents: newWalletCents }, 'return=minimal');
+    student.total_xp = newTotalXp; student.level = newLevel; student.wallet_cents = newWalletCents;
   } catch(err){ console.error(err); }
 
-  renderResultsScreen(graded, score, total, pct, timeUsed, xpEarned, newTotalXp, newLevel, leveledUp, newlyEarnedBadges, byTopic);
+  renderResultsScreen(graded, score, total, pct, timeUsed, xpEarned, newTotalXp, newLevel, leveledUp, newlyEarnedBadges, byTopic, earnedReward, newWalletCents, threshold);
 }
 
-function renderResultsScreen(graded, score, total, pct, timeUsed, xpEarned, newTotalXp, newLevel, leveledUp, newlyEarnedBadges, byTopic){
+function renderResultsScreen(graded, score, total, pct, timeUsed, xpEarned, newTotalXp, newLevel, leveledUp, newlyEarnedBadges, byTopic, earnedReward, newWalletCents, threshold){
   const lvlEl = document.getElementById('ledLevel');
   if(lvlEl) lvlEl.textContent = 'Lvl ' + newLevel;
 
@@ -824,6 +898,9 @@ function renderResultsScreen(graded, score, total, pct, timeUsed, xpEarned, newT
 
   const badgeHtml = newlyEarnedBadges.length ? `<div class="badge-row">${newlyEarnedBadges.map(b => `<span class="badge-chip">🏅 ${b.label}</span>`).join('')}</div>` : '';
   const levelBanner = leveledUp ? `<div class="level-up-banner">🎉 Level up! You're now Level ${newLevel}.</div>` : '';
+  const rewardBanner = earnedReward
+    ? `<div class="reward-banner"><div class="reward-banner-big">💵 You earned $2!</div><div class="reward-banner-sub">${score}/${total} beats the ${threshold}-correct goal. Wallet total: ${formatWallet(newWalletCents)}</div></div>`
+    : `<div class="reward-miss-banner">Needed ${threshold} or more correct to earn $2 this time — got ${score}. So close! Try again for the reward.</div>`;
 
   quizCard.innerHTML = `
     <div class="results">
@@ -831,6 +908,7 @@ function renderResultsScreen(graded, score, total, pct, timeUsed, xpEarned, newT
       <p class="sub" style="margin:0;">${message}</p>
       <div class="big-score">${score}/${total}</div>
       <p class="sub" style="margin:0 0 4px;">${pct}% correct &middot; ${formatTime(timeUsed)} used &middot; +${xpEarned} XP (total ${newTotalXp} XP)</p>
+      ${rewardBanner}
       ${levelBanner}${badgeHtml}${breakdownHtml}
       <p class="sub" style="margin-top:20px;">Full answer summary:</p>
       ${reviewHtml}
@@ -840,6 +918,27 @@ function renderResultsScreen(graded, score, total, pct, timeUsed, xpEarned, newT
     </div>
   `;
   document.getElementById('homeBtn').addEventListener('click', () => { renderHome(); });
+  if(earnedReward) launchConfetti();
+}
+
+function launchConfetti(){
+  const colors = ['#ffb020','#17b199','#8e5ce0','#ff6f91','#2f8fe0'];
+  const container = document.createElement('div');
+  container.className = 'confetti-layer';
+  document.body.appendChild(container);
+  const count = 60;
+  for(let i = 0; i < count; i++){
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = (Math.random() * 100) + 'vw';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDuration = (2.2 + Math.random() * 1.6) + 's';
+    piece.style.animationDelay = (Math.random() * 0.4) + 's';
+    piece.style.width = piece.style.height = (6 + Math.random() * 6) + 'px';
+    piece.style.transform = 'rotate(' + Math.floor(Math.random() * 360) + 'deg)';
+    container.appendChild(piece);
+  }
+  setTimeout(() => container.remove(), 4200);
 }
 
 init();
