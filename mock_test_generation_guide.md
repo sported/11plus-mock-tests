@@ -50,6 +50,7 @@ order by accuracy_pct asc;
   - Less common vocabulary or less obvious phrasing, where relevant (verbal reasoning especially)
 - **Topics never attempted before** — treat as normal/unweighted at standard difficulty, since there's no evidence either way.
 - Only weight *within* the subject being generated — being weak at Spellings shouldn't skew a Maths paper's topic mix.
+- This query groups by exact `topic` string — it only works if topic names are used consistently across tests. Always draft new questions using the canonical topic names in section 1c, not ad-hoc labels.
 
 **Report both dimensions in the summary** when handing back the finished test, e.g.: "Weighted toward Fractions and Ratio (58% and 63% accuracy) with standard-difficulty questions to build fluency. Angles (94% accuracy) got fewer questions but pushed harder — multi-step problems in the boss round instead of single-step ones." This makes the adaptivity visible rather than silent, on both axes.
 
@@ -75,6 +76,20 @@ A real CGP 11+ Verbal Reasoning paper ("Assessment Test 7") was provided 2026-07
 | Word transformation (infer a rule from 2 examples, apply to a 3rd) | `input` — maps directly |
 
 When a generation request doesn't specify strict MCQ, default to this richer mix rather than only synonym/antonym/analogy MCQs — it's a better match for the real exam.
+
+## 1c. Canonical topic list — reuse these names, don't invent near-duplicates
+
+This is the actual list of topic names used across all tests so far (cleaned up 2026-07-10 — "Word problems"/"Word Problems", "Opposite Meaning"/"Antonyms", and "Fractions"/"Fractions & decimals" had already fragmented into separate topics before this list existed, which silently broke the weighting logic in 1a since it groups by exact topic string). **Always check this list first and reuse an existing name if the skill matches, rather than inventing a new label.** If a genuinely new topic is needed, add it here too so the next test reuses it.
+
+**Maths:** Arithmetic, Place value, Rounding, Addition & subtraction, Multiplication & Division, Times tables, Fractions, Percentages, Ratio, Algebra, Sequences, Perimeter & Area, Shape, Angles, Measurement, Time, Speed, Distance & Time, Money, Averages, Statistics, Word Problems, Negative numbers
+
+**Verbal Reasoning:** Synonyms, Antonyms, Analogies, Odd One Out, Word Groups, Hidden Words, Word Completion, Word Transformation, Letter Sequences, Letter-Value Arithmetic, Letter Move, Missing Number, Coded Words, Logic, Number Sequences
+
+**English:** Reading Comprehension, Poetry, Vocabulary & Technique, Grammar, Punctuation, Spelling, Cloze & Word Choice
+
+**Non-Verbal Reasoning** (provisional — no tests generated yet, refine once real content exists): Sequences, Odd One Out, Analogies, Pattern Rules, Coded Patterns, Grouping
+
+**Spellings** (provisional — no tests generated yet, refine once real content exists): Common Misspellings, Homophones, Silent Letters, Plurals, Prefixes & Suffixes, Tricky Words, Compound Words
 
 ## 2. Other questions worth asking (if not specified)
 
