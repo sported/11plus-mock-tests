@@ -38,15 +38,20 @@ group by q.topic
 order by accuracy_pct asc;
 ```
 
-**How to use the result:**
+**How to use the result — two dimensions, quantity AND difficulty:**
 
-- **Under ~10 total answered questions in that subject** (not enough signal yet) — skip weighting, generate a normal balanced spread across topics, and say so in the summary ("not enough attempt history yet to weight this one toward weak spots").
-- **Topics below ~70% accuracy** — give these a noticeably bigger share of the new test's questions (roughly 1.5–2× their normal proportion), since these are the areas actually worth more practice.
-- **Topics at 90%+ accuracy** — still include a few (don't drop a topic to zero just because he's doing well; a bit of retention practice matters and boosts confidence), but fewer than the weak ones.
-- **Topics never attempted before** — treat as normal/unweighted, same as any other topic, since there's no evidence either way.
+- **Under ~10 total answered questions in that subject** (not enough signal yet) — skip weighting, generate a normal balanced spread across topics at standard difficulty, and say so in the summary ("not enough attempt history yet to weight this one toward weak spots").
+- **Topics below ~70% accuracy** — more questions (roughly 1.5–2× their normal share), at standard difficulty for the stated level. The goal here is fluency and consolidation, not stretching — don't make weak-topic questions harder, that just compounds the struggle.
+- **Topics at 90%+ accuracy** — fewer questions, but noticeably **harder** ones, not just the same difficulty in smaller quantity. He's already demonstrated mastery of the basics here, so questions in a strong topic should stretch him rather than recap what he's already proven he can do. Concretely, "harder" means one or more of:
+  - Multi-step versions instead of single-step (e.g. a two-part journey speed problem instead of one direct speed calculation)
+  - Less friendly numbers (decimals, larger values, non-round percentages) instead of clean ones
+  - Combining the topic with a second skill (e.g. a ratio question embedded inside a money word problem)
+  - Defaulting these to the boss round (worth double points/XP) rather than the normal-difficulty section, since they're functioning as the stretch content for that paper
+  - Less common vocabulary or less obvious phrasing, where relevant (verbal reasoning especially)
+- **Topics never attempted before** — treat as normal/unweighted at standard difficulty, since there's no evidence either way.
 - Only weight *within* the subject being generated — being weak at Spellings shouldn't skew a Maths paper's topic mix.
 
-**Report the weighting in the summary** when handing back the finished test, e.g.: "Weighted toward Fractions and Ratio (his accuracy there is currently 58% and 63%), lighter on Angles where he's consistently strong (94%)." This makes the adaptivity visible rather than silent.
+**Report both dimensions in the summary** when handing back the finished test, e.g.: "Weighted toward Fractions and Ratio (58% and 63% accuracy) with standard-difficulty questions to build fluency. Angles (94% accuracy) got fewer questions but pushed harder — multi-step problems in the boss round instead of single-step ones." This makes the adaptivity visible rather than silent, on both axes.
 
 ## 1b. Reference material — a real 11+ paper for calibration
 
