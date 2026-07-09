@@ -364,6 +364,16 @@ function formatWallet(cents){
   const dollars = cents / 100;
   return '$' + (cents % 100 === 0 ? dollars.toString() : dollars.toFixed(2));
 }
+function scoreColor(pct){
+  if(pct >= 75) return '#0d7a68';   // teal — good
+  if(pct >= 50) return '#8a5b06';   // amber — okay, room to improve
+  return '#a8342a';                 // coral/red — needs work
+}
+function scoreColorBg(pct){
+  if(pct >= 75) return 'var(--teal-bg)';
+  if(pct >= 50) return 'var(--amber-bg)';
+  return 'var(--coral-bg)';
+}
 
 async function init(){
   titleText.textContent = '11+ Mock Tests';
@@ -475,8 +485,9 @@ async function renderHome(){
   const tilesHtml = ALL_TESTS.map(t => {
     const info = subjectInfo(t.subject);
     const attempt = latestByTest[t.id];
+    const attemptPct = attempt ? Math.round((attempt.score/attempt.total_questions)*100) : 0;
     const statusHtml = attempt
-      ? `<div class="tile-status done">✅ ${attempt.score}/${attempt.total_questions} &middot; ${Math.round((attempt.score/attempt.total_questions)*100)}% &middot; tap to review</div>`
+      ? `<div class="tile-status done" style="background:${scoreColorBg(attemptPct)}; color:${scoreColor(attemptPct)};">✅ ${attempt.score}/${attempt.total_questions} &middot; ${attemptPct}% &middot; tap to review</div>`
       : `<div class="tile-status todo">▶ Not started</div>`;
     return `
       <button class="tile" data-test-id="${t.id}">
@@ -548,7 +559,7 @@ async function renderPastAttemptReview(attempt){
   quizCard.innerHTML = `
     <div class="results">
       <h2>Previous attempt${dateStr ? ' — ' + dateStr : ''}</h2>
-      <div class="big-score">${attempt.score}/${attempt.total_questions}</div>
+      <div class="big-score" style="color:${scoreColor(pct)};">${attempt.score}/${attempt.total_questions}</div>
       <p class="sub" style="margin:0 0 4px;">${pct}% correct &middot; +${attempt.xp_earned || 0} XP earned</p>
       ${reviewHtml}
       <div class="actions" style="justify-content:space-between; margin-top:24px;">
@@ -875,7 +886,7 @@ function renderResultsScreen(graded, score, total, pct, timeUsed, xpEarned, newT
     if(!byTopic[t]) return;
     const {correct, total: tt} = byTopic[t];
     const p = Math.round((correct/tt)*100);
-    breakdownHtml += `<div class="bd-row"><div class="bd-label">${t}</div><div class="bd-bar"><div class="bd-fill" style="width:${p}%"></div></div><div class="bd-frac">${correct}/${tt}</div></div>`;
+    breakdownHtml += `<div class="bd-row"><div class="bd-label">${t}</div><div class="bd-bar"><div class="bd-fill" style="width:${p}%; background:${scoreColor(p)};"></div></div><div class="bd-frac">${correct}/${tt}</div></div>`;
   });
   breakdownHtml += '</div>';
 
@@ -909,7 +920,7 @@ function renderResultsScreen(graded, score, total, pct, timeUsed, xpEarned, newT
     <div class="results">
       <h2>Test complete, ${student.name}! 🎉</h2>
       <p class="sub" style="margin:0;">${message}</p>
-      <div class="big-score">${score}/${total}</div>
+      <div class="big-score" style="color:${scoreColor(pct)};">${score}/${total}</div>
       <p class="sub" style="margin:0 0 4px;">${pct}% correct &middot; ${formatTime(timeUsed)} used &middot; +${xpEarned} XP (total ${newTotalXp} XP)</p>
       ${rewardBanner}
       ${levelBanner}${badgeHtml}${breakdownHtml}
