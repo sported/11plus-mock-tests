@@ -83,13 +83,77 @@ This is the actual list of topic names used across all tests so far (cleaned up 
 
 **Maths:** Arithmetic, Place value, Rounding, Addition & subtraction, Multiplication & Division, Times tables, Fractions, Percentages, Ratio, Algebra, Sequences, Perimeter & Area, Shape, Angles, Measurement, Time, Speed, Distance & Time, Money, Averages, Statistics, Word Problems, Negative numbers
 
-**Verbal Reasoning:** Synonyms, Antonyms, Analogies, Odd One Out, Word Groups, Hidden Words, Word Completion, Word Transformation, Letter Sequences, Letter-Value Arithmetic, Letter Move, Missing Number, Coded Words, Logic, Number Sequences
+**Verbal Reasoning:** Synonyms, Antonyms, Analogies, Odd One Out, Word Groups, Hidden Words, Word Completion, Word Transformation, Letter Sequences, Letter-Value Arithmetic, Letter Move, Missing Number, Coded Words, Logic, Number Sequences, Compound Words, Number Analogies, Insert a Letter
 
 **English:** Reading Comprehension, Poetry, Vocabulary & Technique, Grammar, Punctuation, Spelling, Cloze & Word Choice
 
 **Non-Verbal Reasoning** (provisional — no tests generated yet, refine once real content exists): Sequences, Odd One Out, Analogies, Pattern Rules, Coded Patterns, Grouping
 
 **Spellings** (provisional — no tests generated yet, refine once real content exists): Common Misspellings, Homophones, Silent Letters, Plurals, Prefixes & Suffixes, Tricky Words, Compound Words
+
+## 1d. Target schools — what they actually test (researched 2026-07-10)
+
+The stated targets are Kent grammar schools, St Olave's (Orpington), Eltham College, and Sevenoaks — researched via official school/council pages, independent 11+ guides, and forum/parent discussion (The Student Room, tutoring-company breakdowns of past papers). Findings below, so content is pitched at what he'll actually sit rather than generic 11+ material.
+
+**Kent Test** (all 32 Kent grammar schools, single registration covers all of them):
+- Provider: GL Assessment. Two one-hour multiple-choice papers plus an unmarked writing task (only reviewed for borderline/appeal cases).
+- Subjects: **English, Maths, and Verbal Reasoning only — no Non-Verbal Reasoning.** This is a genuine Kent-specific quirk; most other GL regions test all four.
+- Paper 1: one hour, split into two 25-minute sections (English + Maths), each with a 5-minute practice exercise first.
+- Paper 2: one hour, Reasoning, split into three sections.
+- Pass threshold: total aggregate score of 332+, with no individual subject below 106 (2026 figures — thresholds are recalculated yearly and not published in advance).
+- Maths goes beyond standard Year 6 curriculum into ratio, algebra, and percentage change. English follows GL's standard 8-comprehension-question-type format plus standalone vocabulary/spelling/punctuation/grammar sections.
+- A few individual Kent schools (Weald of Kent, Dover Boys/Girls, Harvey Grammar, Folkestone Girls) offer bespoke alternative tests instead of/alongside the Kent Test — not relevant unless specifically asked about.
+
+**St Olave's Grammar School, Orpington** (boys, highly selective, no catchment area):
+- Two-stage process, own bespoke test (not part of the Kent consortium).
+- **Stage 1 (SET):** one hour, ~60 multiple-choice questions across 4 sections covering **English, Maths, Verbal Reasoning, and Non-Verbal Reasoning together.** Top ~450 scorers advance.
+- **Stage 2:** two one-hour papers same day (15-min break between). English paper: reading comprehension (multiple choice) + a creative/persuasive writing task. Maths paper: KS2 content but harder than usual, and — importantly — **not multiple choice, full written answers required.** Forum/tutor sources consistently flag Stage 2 maths as "questions harder than they're used to."
+- Tie-break order: maths score, then writing, then English comprehension, then the original SET.
+- English comprehension specifically tests vocabulary, grammar, inference, and factual recall — matches the reference paper style already saved.
+
+**Eltham College, Mottingham** (co-ed independent day school, own bespoke exam):
+- Written English paper (45 min): comprehension + analysis of a text passage, plus a creative writing task.
+- Written Maths paper (45 min): **mixed format** — a multiple-choice section plus longer problem-solving questions requiring full written working. No calculators allowed.
+- Verbal and Non-Verbal Reasoning: **CEM Select, a computer-adaptive test** (question difficulty adjusts based on previous answers; students aren't expected to finish every question). This is a genuinely different testing model from GL's fixed-paper format — can't be replicated exactly on this platform, but the underlying VR/NVR skill content is the same.
+- Maths prep sources specifically flag algebra, geometry, and number theory as going beyond the basics.
+
+**Sevenoaks School** (co-ed independent, day and boarding):
+- Pre-test stage: **ISEB Common Pre-Test** (online adaptive, covers Maths/English/VR/NVR) — or a Kent Test/other grammar school score can be substituted if the child's school doesn't offer ISEB.
+- Second stage (assessment day): written Maths and English papers, plus a 40-minute group discussion (not something this platform can replicate).
+- **Distinctive and important: Sevenoaks' own papers are NOT multiple choice.** "Simple question and answer format... pupils have to work out the actual answer themselves" — this is explicitly different from the Kent Test/ISEB style, and is the strongest real-world justification on this platform for keeping meaningful input-type (not just MCQ) questions in maths and English, especially for anything pitched at this specific school.
+- English paper has a substantial written composition component (40-50% of marks) — beyond what this platform's format can assess directly, but comprehension and technical English (grammar/vocabulary) remain directly relevant.
+- No Non-Verbal Reasoning in Sevenoaks' own papers (only in the ISEB pre-test stage, which is a different provider's test).
+
+**What this means for generation:**
+- English and Maths content should assume KS2-plus-stretch level across the board — all four schools go beyond standard Year 6 curriculum in some way (ratio/algebra/percentage change for Kent; "harder than usual" for St Olave's Stage 2; algebra/geometry/number theory for Eltham; unstructured problem-solving for Sevenoaks).
+- Verbal Reasoning is tested by three of the four schools (not Sevenoaks' own papers, though it appears in the ISEB pre-test route) — worth continued strong investment.
+- Non-Verbal Reasoning is notably **absent from the Kent Test** specifically — if a test is explicitly "for the Kent Test," NVR can be deprioritised; if it's for St Olave's, Eltham, or general 11+ prep, NVR should stay in rotation.
+- Don't default everything to MCQ. Sevenoaks and St Olave's Stage 2 use full written-answer formats for Maths (and Sevenoaks for English too) — `input`-type questions aren't just a grading convenience on this platform, they're a genuine match for what he'll actually face at more than one of these schools.
+- Time pressure is extreme in GL-style VR papers specifically (37-45 seconds per question, ~80 questions in 50-60 min) — when timing a VR test, don't be overly generous; tight timing is part of the actual skill being tested.
+
+**The 21 official GL Assessment Verbal Reasoning question types** (this is the authoritative structure behind Kent Test, St Olave's SET, and most GL-based VR papers nationally — cross-check new VR tests against this list for coverage, not just the canonical topic names in 1c):
+
+1. Insert a Letter (completes both a word before and after brackets)
+2. Two Odd Ones Out (find 2 of 5 that don't belong — not just 1)
+3. Related Words / Alphabet Code (letter-shift ciphers)
+4. Closest in Meaning (Synonyms)
+5. Hidden Word (a word hidden across two adjacent words in a sentence)
+6. Missing Word (3 consecutive letters removed from a capitalised word, sentence must make sense)
+7. Letters for Numbers (letter-value arithmetic)
+8. Move a Letter (remove from word A, add to word B, forms two new words)
+9. Letter Series (alphabet sequences)
+10. Word Analogies / Word Connections
+11. Number Series
+12. Compound Words (combine one word from each of two groups) — **not yet in any generated test, add next time a VR paper is built**
+13. Make a New Word (pattern from two example word-pairs, apply to a third)
+14. Letter Combinations (paired-letter alphabet relationships)
+15. Applying Logic to Written Information
+16. Antonyms
+17. Find the Sum (missing-number equations)
+18. Matching Number Sets (a pattern/operation linking pairs of numbers, apply to a third pair) — **not yet in any generated test, add next time**
+19. Word/Number Codes (shared-letter code-breaking across several words)
+20. Complete the Word (three word-pairs, same transformation rule, find the missing piece)
+21. Same Meaning (pick one word from each of two groups that share a meaning with a target word)
 
 ## 2. Other questions worth asking (if not specified)
 
