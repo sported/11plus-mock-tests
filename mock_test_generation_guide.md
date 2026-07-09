@@ -193,5 +193,3 @@ Steps:
 3. Insert via a single SQL statement against the project above: `mock_tests` row first, then `questions` rows in the same statement (using a CTE, as done previously) so they're linked correctly.
 4. Verify immediately after insert: confirm question count and boss-round count match what was intended, and spot-check one row's `explanation` reads correctly (watch for apostrophes needing escaping in SQL).
 5. Report back: title, subject, question count, time limit, the level/difficulty assumptions used, and the weighting rationale from 1a.
-
-<!-- test commit: verifying ignore-build works for guide-only changes -->
