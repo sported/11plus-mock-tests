@@ -155,6 +155,8 @@ The stated targets are Kent grammar schools, St Olave's (Orpington), Eltham Coll
 20. Complete the Word (three word-pairs, same transformation rule, find the missing piece)
 21. Same Meaning (pick one word from each of two groups that share a meaning with a target word)
 
+**Guardrail (found by real mistake, 2026-07-10):** the numeric/pattern-flavoured VR types — Missing Number, Letter-Value Arithmetic, Letter Sequences, Number Series — are legitimate official GL types, but a VR paper that leans on them too heavily reads as "just doing sums" rather than verbal reasoning, and crowds out the word-based types (Synonyms, Antonyms, Analogies, Word Groups, Hidden Words) that are the actual core of the subject. A real VR paper generated this way ended up with 40% of its questions numeric-flavoured and zero Synonyms, Analogies, Word Groups, or Hidden Words — not caught until the parent noticed it felt calculation-heavy. **Keep the numeric-flavoured types combined to roughly 15-20% of a VR paper**, and always include at least one question from each of Synonyms, Antonyms, Analogies, Odd One Out, and Hidden Words/Word Groups unless a specific request says otherwise.
+
 ## 2. Other questions worth asking (if not specified)
 
 - **Number of questions** — default to 25 unless told otherwise.
