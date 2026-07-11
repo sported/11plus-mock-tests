@@ -19,6 +19,8 @@ Never generate a test on assumptions alone. If any of these are missing from the
 
 This is not something to ask about — it's a step I do myself, every time, before drafting any questions. Explicit topic requests from the parent (above) take priority over this; this step fills in the gaps and weights the rest.
 
+**Real risk, checked and confirmed clean 2026-07-11, but structurally guarded against now:** the parent uses a second student account (name "student") to randomly test the app. Every performance-check query run so far correctly filtered to the real student by name, so no test-account data has ever leaked into a weighting decision — but that only worked because the name was typed correctly every time, which isn't a real guarantee. The `students` table now has an `is_test_account` boolean (true for "student"). **Always include `and s.is_test_account = false` in this query, in addition to naming the real student** — belt and suspenders, not just one or the other.
+
 **Query recent performance for the subject in question:**
 
 ```sql
@@ -32,6 +34,7 @@ join attempts a on a.id = aa.attempt_id
 join students s on s.id = a.student_id
 join mock_tests mt on mt.id = q.mock_test_id
 where s.name = '<student name>'
+  and s.is_test_account = false
   and mt.subject = '<subject>'
   and a.submitted_at > now() - interval '60 days'
 group by q.topic
@@ -180,6 +183,20 @@ If subject and level are both given but nothing else is, it's fine to proceed us
 - **`topic` field** should be a short, human-readable label used for grouping and badge awarding (e.g. "Fractions," "Ratio," "Odd one out") — reuse consistent topic names across tests in the same subject where possible, rather than inventing near-duplicate labels.
 - **No calculator needed** for maths content — keep numbers/steps appropriate for mental or written working at the stated level.
 - **Check for overlap** with existing tests before writing new questions — query `mock_tests`/`questions` first so the new paper doesn't just repeat what's already there.
+
+## 3a. Question difficulty rating (1-5) — absolute scale, never relative
+
+Every question needs a `difficulty` value 1-5, used for topic mastery scoring (separate from `xp_value`/`is_boss_round`, which stay purely for the gamification layer). **This must be an absolute rating anchored to UK year-group standard, never a relative rank within the test being written** — do not default to spreading a test's questions across 1-5 "for variety." A test written at a genuinely easy level should mostly score 1s. A real mistake happened here on 2026-07-10: the Foundations Mock Test (deliberately Year 4 level) was initially rated with difficulty spread 1-3 by ranking its own questions against each other, when an absolute rating put 24 of 25 questions at difficulty 1. Always ask "where does this sit against the year-group anchor below," never "is this harder or easier than the other questions in this test."
+
+| Difficulty | Anchor |
+|---|---|
+| **1** | Year 3-4 level — basic facts, single-step, small numbers |
+| **2** | Year 5 level — standard KS2, slightly bigger numbers or two-step |
+| **3** | Year 6 / standard 11+ level — genuine exam-standard baseline |
+| **4** | Above Year 6 — stretch content (algebra, multi-step word problems, less common vocabulary) |
+| **5** | Super-selective ceiling — genuinely rare difficulty, matching St Olave's Stage 2 or Eltham's algebra/geometry/number-theory stretch content from section 1d |
+
+A whole test can legitimately sit mostly at one difficulty level if that's genuinely where it belongs (e.g. a Foundations-level paper should be nearly all 1s; a paper deliberately built to stretch a strong topic per section 1a should lean 4-5). Don't force a spread that isn't real.
 
 ## 4. Technical steps
 
