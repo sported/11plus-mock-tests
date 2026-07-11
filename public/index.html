@@ -231,9 +231,11 @@
   .level-row-badge{ font-size: 11.5px; font-weight:700; padding: 4px 10px; border-radius: 20px; white-space:nowrap; }
   .level-row-chevron{ color: var(--ink-soft); font-size: 12px; flex-shrink:0; }
   .level-topics{ padding: 4px 4px 10px 8px; margin-bottom: 6px; }
-  .level-topic-row{ display:flex; align-items:center; justify-content:space-between; padding: 6px 8px; font-size: 12.5px; color: var(--ink-soft); border-bottom: 1px dashed var(--line); }
-  .level-topic-name{ font-weight:600; }
+  .level-topic-row{ display:flex; align-items:center; justify-content:space-between; padding: 6px 8px; font-size: 12.5px; color: var(--ink-soft); border-bottom: 1px dashed var(--line); gap: 8px; }
+  .level-topic-name{ font-weight:600; flex-shrink:0; }
+  .level-topic-right{ display:flex; flex-direction:column; align-items:flex-end; gap:3px; }
   .level-topic-badge{ font-size: 11px; font-weight:700; padding: 3px 8px; border-radius: 20px; white-space:nowrap; }
+  .level-capped-note{ font-size: 9.5px; color: var(--ink-soft); font-style:italic; white-space:nowrap; }
 
   .tiles-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:14px; margin-top: 8px; }
   .tile{ text-align:left; border:none; cursor:pointer; border-radius: 16px; padding:0; overflow:hidden; background: var(--panel); border: 1px solid var(--line); box-shadow: 0 3px 10px rgba(43,34,80,0.05); transition: transform 0.12s; }
@@ -541,23 +543,31 @@ async function renderHome(){
 
 const SUBJECT_LEVEL_LABELS = { maths:'Maths', english:'English', verbal_reasoning:'Verbal Reasoning', non_verbal_reasoning:'Non-Verbal Reasoning', spellings:'Spellings' };
 
-function bandColor(band){
-  if(band === 'Greater Depth') return '#0d7a68';
-  if(band === 'Expected Standard') return '#8a5b06';
-  if(band === 'Working Towards') return '#a8342a';
+function levelColor(level){
+  if(level === 5) return '#0d7a68';
+  if(level === 4) return '#1a8f6f';
+  if(level === 3) return '#8a5b06';
+  if(level === 2) return '#b8791f';
+  if(level === 1) return '#a8342a';
   return '#8b879f';
 }
-function bandBg(band){
-  if(band === 'Greater Depth') return 'var(--teal-bg)';
-  if(band === 'Expected Standard') return 'var(--amber-bg)';
-  if(band === 'Working Towards') return 'var(--coral-bg)';
+function levelBg(level){
+  if(level === 5 || level === 4) return 'var(--teal-bg)';
+  if(level === 3 || level === 2) return 'var(--amber-bg)';
+  if(level === 1) return 'var(--coral-bg)';
   return 'var(--panel-2)';
 }
-function bandEmoji(band){
-  if(band === 'Greater Depth') return '🌟';
-  if(band === 'Expected Standard') return '✅';
-  if(band === 'Working Towards') return '🌱';
+function levelEmoji(level){
+  if(level === 5) return '🏆';
+  if(level === 4) return '🚀';
+  if(level === 3) return '✅';
+  if(level === 2) return '🌤️';
+  if(level === 1) return '🌱';
   return '❔';
+}
+function levelBadgeText(row){
+  if(row.level === null || row.level === undefined) return row.label;
+  return `Level ${row.level} · ${row.label}`;
 }
 
 let LEVELS_CACHE = { subjects: [], topics: [] };
@@ -582,7 +592,7 @@ async function renderLevelsSection(){
     return `
       <button class="level-row" data-subject="${s.subject}">
         <span class="level-row-label">${label}</span>
-        <span class="level-row-badge" style="background:${bandBg(s.band)}; color:${bandColor(s.band)};">${bandEmoji(s.band)} ${s.band}${s.band !== 'Not enough data yet' ? ' · ' + s.score + '%' : ''}</span>
+        <span class="level-row-badge" style="background:${levelBg(s.level)}; color:${levelColor(s.level)};">${levelEmoji(s.level)} ${levelBadgeText(s)}</span>
         <span class="level-row-chevron">▾</span>
       </button>
       <div class="level-topics" id="levelTopics-${s.subject}" style="display:none;"></div>
@@ -592,7 +602,7 @@ async function renderLevelsSection(){
   return `
     <div class="levels-panel">
       <div class="levels-title">📊 My Levels</div>
-      <p class="levels-sub">Based on his last real school report bands — Working Towards, Expected Standard, Greater Depth.</p>
+      <p class="levels-sub">Level 1 At Peer Group · 2 Kent Grammar (Edge) · 3 Kent Grammar (Comfortable) · 4 Stretching to Super-Selective · 5 Super-Selective (Comfortable). Based on both accuracy and how hard the questions actually were.</p>
       ${rows}
     </div>
   `;
@@ -614,7 +624,10 @@ function wireLevelsSection(){
       panel.innerHTML = topics.map(t => `
         <div class="level-topic-row">
           <span class="level-topic-name">${t.topic}</span>
-          <span class="level-topic-badge" style="background:${bandBg(t.band)}; color:${bandColor(t.band)};">${t.band !== 'Not enough data yet' ? t.score + '%' : 'Not enough data'}</span>
+          <span class="level-topic-right">
+            <span class="level-topic-badge" style="background:${levelBg(t.level)}; color:${levelColor(t.level)};">${levelBadgeText(t)}</span>
+            ${t.capped_by_difficulty ? '<span class="level-capped-note">needs harder questions to confirm</span>' : ''}
+          </span>
         </div>
       `).join('');
       panel.style.display = 'block';
