@@ -223,6 +223,18 @@
   .center-msg{ text-align:center; color:var(--ink-soft); font-size:14px; padding: 40px 10px; }
 
   /* home tiles */
+  .levels-panel{ background: var(--panel-2); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+  .levels-title{ font-family:'Fredoka', sans-serif; font-size: 16px; color: var(--ink); margin-bottom: 2px; }
+  .levels-sub{ font-size: 11.5px; color: var(--ink-soft); margin: 0 0 10px; }
+  .level-row{ width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; margin-bottom:6px; cursor:pointer; text-align:left; }
+  .level-row-label{ font-weight:700; color: var(--ink); font-size: 13.5px; flex-shrink:0; }
+  .level-row-badge{ font-size: 11.5px; font-weight:700; padding: 4px 10px; border-radius: 20px; white-space:nowrap; }
+  .level-row-chevron{ color: var(--ink-soft); font-size: 12px; flex-shrink:0; }
+  .level-topics{ padding: 4px 4px 10px 8px; margin-bottom: 6px; }
+  .level-topic-row{ display:flex; align-items:center; justify-content:space-between; padding: 6px 8px; font-size: 12.5px; color: var(--ink-soft); border-bottom: 1px dashed var(--line); }
+  .level-topic-name{ font-weight:600; }
+  .level-topic-badge{ font-size: 11px; font-weight:700; padding: 3px 8px; border-radius: 20px; white-space:nowrap; }
+
   .tiles-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:14px; margin-top: 8px; }
   .tile{ text-align:left; border:none; cursor:pointer; border-radius: 16px; padding:0; overflow:hidden; background: var(--panel); border: 1px solid var(--line); box-shadow: 0 3px 10px rgba(43,34,80,0.05); transition: transform 0.12s; }
   .tile:hover{ transform: translateY(-2px); }
@@ -502,7 +514,10 @@ async function renderHome(){
     `;
   }).join('');
 
-  quizCard.innerHTML = `<div class="tiles-grid">${tilesHtml}</div>`;
+  const levelsHtml = await renderLevelsSection();
+
+  quizCard.innerHTML = levelsHtml + `<div class="tiles-grid">${tilesHtml}</div>`;
+  wireLevelsSection();
   quizCard.querySelectorAll('.tile').forEach(el => {
     el.addEventListener('click', async () => {
       const testId = el.dataset.testId;
@@ -520,6 +535,90 @@ async function renderHome(){
         console.error(err);
         quizCard.innerHTML = '<div class="center-msg">Could not load that test. Please try again.</div>';
       }
+    });
+  });
+}
+
+const SUBJECT_LEVEL_LABELS = { maths:'Maths', english:'English', verbal_reasoning:'Verbal Reasoning', non_verbal_reasoning:'Non-Verbal Reasoning', spellings:'Spellings' };
+
+function bandColor(band){
+  if(band === 'Greater Depth') return '#0d7a68';
+  if(band === 'Expected Standard') return '#8a5b06';
+  if(band === 'Working Towards') return '#a8342a';
+  return '#8b879f';
+}
+function bandBg(band){
+  if(band === 'Greater Depth') return 'var(--teal-bg)';
+  if(band === 'Expected Standard') return 'var(--amber-bg)';
+  if(band === 'Working Towards') return 'var(--coral-bg)';
+  return 'var(--panel-2)';
+}
+function bandEmoji(band){
+  if(band === 'Greater Depth') return '🌟';
+  if(band === 'Expected Standard') return '✅';
+  if(band === 'Working Towards') return '🌱';
+  return '❔';
+}
+
+let LEVELS_CACHE = { subjects: [], topics: [] };
+
+async function renderLevelsSection(){
+  try{
+    const [subjectRes, topicRes] = await Promise.all([
+      fetch(SUPABASE_URL + '/rest/v1/rpc/get_student_subject_levels', { method:'POST', headers: sbHeaders(), body: JSON.stringify({ p_student_id: student.id }) }),
+      fetch(SUPABASE_URL + '/rest/v1/rpc/get_student_levels', { method:'POST', headers: sbHeaders(), body: JSON.stringify({ p_student_id: student.id }) })
+    ]);
+    LEVELS_CACHE.subjects = subjectRes.ok ? await subjectRes.json() : [];
+    LEVELS_CACHE.topics = topicRes.ok ? await topicRes.json() : [];
+  } catch(err){
+    console.error(err);
+    return '';
+  }
+
+  if(!LEVELS_CACHE.subjects.length) return '';
+
+  const rows = LEVELS_CACHE.subjects.map(s => {
+    const label = SUBJECT_LEVEL_LABELS[s.subject] || s.subject;
+    return `
+      <button class="level-row" data-subject="${s.subject}">
+        <span class="level-row-label">${label}</span>
+        <span class="level-row-badge" style="background:${bandBg(s.band)}; color:${bandColor(s.band)};">${bandEmoji(s.band)} ${s.band}${s.band !== 'Not enough data yet' ? ' · ' + s.score + '%' : ''}</span>
+        <span class="level-row-chevron">▾</span>
+      </button>
+      <div class="level-topics" id="levelTopics-${s.subject}" style="display:none;"></div>
+    `;
+  }).join('');
+
+  return `
+    <div class="levels-panel">
+      <div class="levels-title">📊 My Levels</div>
+      <p class="levels-sub">Based on his last real school report bands — Working Towards, Expected Standard, Greater Depth.</p>
+      ${rows}
+    </div>
+  `;
+}
+
+function wireLevelsSection(){
+  quizCard.querySelectorAll('.level-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const subject = row.dataset.subject;
+      const panel = document.getElementById('levelTopics-' + subject);
+      const chevron = row.querySelector('.level-row-chevron');
+      const isOpen = panel.style.display !== 'none';
+      if(isOpen){
+        panel.style.display = 'none';
+        chevron.textContent = '▾';
+        return;
+      }
+      const topics = LEVELS_CACHE.topics.filter(t => t.subject === subject);
+      panel.innerHTML = topics.map(t => `
+        <div class="level-topic-row">
+          <span class="level-topic-name">${t.topic}</span>
+          <span class="level-topic-badge" style="background:${bandBg(t.band)}; color:${bandColor(t.band)};">${t.band !== 'Not enough data yet' ? t.score + '%' : 'Not enough data'}</span>
+        </div>
+      `).join('');
+      panel.style.display = 'block';
+      chevron.textContent = '▴';
     });
   });
 }
